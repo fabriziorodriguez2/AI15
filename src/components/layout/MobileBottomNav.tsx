@@ -52,10 +52,10 @@ export function MobileBottomNav() {
   return (
     <>
       <nav
-        className="relative z-20 shrink-0 border-t border-rosa-claro bg-white/95 backdrop-blur"
+        className="relative z-20 shrink-0 border-t border-[#eadfe5] bg-white"
         aria-label="Navegación principal"
       >
-        <ul className="flex items-stretch justify-between px-2 py-1.5">
+        <ul className="flex items-stretch justify-between px-2 pb-3 pt-1.5">
           {PRIMARY.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -66,9 +66,9 @@ export function MobileBottomNav() {
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 text-[10px] font-medium transition",
+                    "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-[11px] font-semibold transition-colors",
                     isActive
-                      ? "text-rosa"
+                      ? "bg-rosa-fondo text-rosa"
                       : "text-texto/60 hover:text-ciruela",
                   )}
                 >
@@ -85,9 +85,9 @@ export function MobileBottomNav() {
               aria-haspopup="dialog"
               aria-expanded={moreOpen}
               className={cn(
-                "flex w-full flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 text-[10px] font-medium transition",
+                "flex min-h-12 w-full flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-[11px] font-semibold transition-colors",
                 isSecondaryActive
-                  ? "text-rosa"
+                  ? "bg-rosa-fondo text-rosa"
                   : "text-texto/60 hover:text-ciruela",
               )}
             >
@@ -108,18 +108,18 @@ export function MobileBottomNav() {
           onClick={() => setMoreOpen(false)}
         >
           <div
-            className="rounded-t-2xl bg-white p-4 shadow-card"
+          className="rounded-t-2xl bg-white p-4 shadow-soft"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-display text-base font-bold text-ciruela">
+              <h2 className="font-display text-lg font-bold text-ciruela">
                 Más opciones
               </h2>
               <button
                 type="button"
                 onClick={() => setMoreOpen(false)}
                 aria-label="Cerrar"
-                className="grid size-8 place-items-center rounded-full text-texto/60 hover:bg-rosa-fondo"
+                className="grid size-11 place-items-center rounded-xl text-texto/60 hover:bg-rosa-fondo"
               >
                 <X size={18} aria-hidden="true" />
               </button>
@@ -137,7 +137,7 @@ export function MobileBottomNav() {
                       onClick={() => setMoreOpen(false)}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition",
+                        "flex min-h-12 items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition",
                         isActive
                           ? "bg-rosa-claro text-ciruela"
                           : "text-texto/70 hover:bg-rosa-fondo",

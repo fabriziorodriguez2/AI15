@@ -145,7 +145,7 @@ export function CreateEventForm() {
         </p>
       </div>
 
-      <div className="card">
+      <div className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">
         {/* Paso 1 */}
         {step === 0 && (
           <div className="space-y-5">
@@ -297,7 +297,7 @@ export function CreateEventForm() {
                 {(["UYU", "USD"] as const).map((cur) => (
                   <label
                     key={cur}
-                    className="flex flex-1 cursor-pointer items-center gap-2 rounded-xl border border-rosa-claro bg-white px-4 py-3 text-sm font-medium text-ciruela transition has-[:checked]:border-rosa has-[:checked]:bg-rosa-claro/40"
+                    className="flex min-h-12 flex-1 cursor-pointer items-center gap-2 rounded-xl border border-[#dfd3da] bg-white px-4 py-3 text-sm font-medium text-ciruela transition has-[:checked]:border-rosa has-[:checked]:bg-rosa-claro/30"
                   >
                     <input
                       type="radio"

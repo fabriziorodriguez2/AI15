@@ -21,23 +21,28 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <div className={cn("card p-5", className)}>
+    <div
+      className={cn(
+        "rounded-xl border border-[#eadfe5] bg-white p-4 shadow-card",
+        className,
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
         <p className="text-xs font-medium uppercase tracking-wide text-texto/50">
           {label}
         </p>
         {Icon && (
-          <span className="grid size-8 place-items-center rounded-lg bg-rosa-claro text-rosa">
+          <span className="grid size-8 place-items-center rounded-lg bg-rosa-fondo text-rosa">
             <Icon size={16} aria-hidden="true" />
           </span>
         )}
       </div>
-      <p className="mt-2 font-display text-2xl font-bold text-ciruela">
+      <p className="mt-3 font-display text-[22px] font-bold leading-none text-ciruela">
         {value}
       </p>
       {hint && <p className="mt-1 text-xs text-texto/60">{hint}</p>}
       {isDemo && (
-        <span className="mt-2 inline-block rounded-full bg-dorado/15 px-2 py-0.5 text-[10px] font-semibold text-dorado">
+        <span className="mt-2 inline-block rounded-md bg-dorado/10 px-2 py-0.5 text-[10px] font-semibold text-[#8f7420]">
           Dato de demostración
         </span>
       )}

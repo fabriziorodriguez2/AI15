@@ -55,7 +55,7 @@ export default function DecisionesPage() {
       />
 
       {decisions.length === 0 ? (
-        <div className="card py-10 text-center">
+        <div className="surface-section px-5 text-center">
           <p className="text-sm text-texto/60">
             Todavía no registraste decisiones. Anotá el salón, el vestido, la
             paleta o cualquier elección para mantener la coherencia.
@@ -66,9 +66,9 @@ export default function DecisionesPage() {
           </button>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
           {decisions.map((decision) => (
-            <li key={decision.id} className="card p-4">
+            <li key={decision.id} className="py-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export default function DecisionesPage() {
                       {DECISION_CATEGORY_LABELS[decision.category]}
                     </span>
                     {decision.confirmed && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-dorado/15 px-2 py-0.5 text-[10px] font-semibold text-dorado">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-dorado/10 px-2 py-0.5 text-[10px] font-semibold text-[#8f7420]">
                         <Lock size={10} aria-hidden="true" />
                         Confirmada
                       </span>
@@ -99,14 +99,14 @@ export default function DecisionesPage() {
                       setFormOpen(true);
                     }}
                     aria-label="Editar decisión"
-                    className="grid size-8 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
+                    className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
                   >
                     <Pencil size={15} aria-hidden="true" />
                   </button>
                   <button
                     onClick={() => setToDelete(decision)}
                     aria-label="Eliminar decisión"
-                    className="grid size-8 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
+                    className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
                   >
                     <Trash2 size={15} aria-hidden="true" />
                   </button>

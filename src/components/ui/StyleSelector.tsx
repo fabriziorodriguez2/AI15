@@ -34,9 +34,9 @@ export function StyleSelector({ value, onChange }: StyleSelectorProps) {
             aria-pressed={active}
             onClick={() => toggle(style)}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition",
+              "inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold transition",
               active
-                ? "border-rosa bg-rosa text-white shadow-soft"
+                ? "border-rosa bg-rosa text-white"
                 : "border-rosa-claro bg-white text-ciruela hover:border-rosa hover:bg-rosa-claro/40",
             )}
           >

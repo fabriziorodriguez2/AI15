@@ -88,9 +88,9 @@ export function AIStatusCard({ variant = "compact" }: AIStatusCardProps) {
   }
 
   return (
-    <div className="card border-dorado/40 bg-gradient-to-br from-white to-rosa-fondo">
+    <div className="rounded-xl border border-[#e2d3a8] bg-white p-5 shadow-card">
       <div className="flex items-start gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-dorado/15 text-dorado">
+        <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-dorado/10 text-[#9a7b19]">
           {aiPlan?.isOutdated ? (
             <AlertTriangle size={20} aria-hidden="true" />
           ) : (
@@ -102,7 +102,9 @@ export function AIStatusCard({ variant = "compact" }: AIStatusCardProps) {
             <h3 className="font-display text-lg font-bold text-ciruela">
               Asistente AI15
             </h3>
-            <span className="chip bg-dorado/15 text-dorado">{statusLabel}</span>
+            <span className="rounded-md bg-dorado/10 px-2 py-1 text-[11px] font-semibold text-[#806816]">
+              {statusLabel}
+            </span>
           </div>
           <p className="mt-1.5 text-sm text-texto/70">{description}</p>
         </div>
@@ -166,7 +168,7 @@ export function AIStatusCard({ variant = "compact" }: AIStatusCardProps) {
             Vamos a enviar estos datos a un servicio de IA (Gemini) para armar
             tu plan. No se comparten datos de contacto ni imágenes.
           </p>
-          <ul className="space-y-1 rounded-xl bg-rosa-fondo p-3 text-xs">
+          <ul className="space-y-1 border-y border-[#eadfe5] py-3 text-xs">
             <li>• Fiesta de {event.honoreeName} · {event.city}</li>
             <li>• {event.guestCount} invitados · {event.currency} {event.totalBudget}</li>
             <li>• {event.styles.length} estilo(s), temática y colores</li>

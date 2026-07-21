@@ -86,7 +86,7 @@ export function ExpenseForm({ initial, onSubmit, onCancel }: ExpenseFormProps) {
           {(["estimated", "reserved", "paid"] as const).map((st) => (
             <label
               key={st}
-              className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rosa-claro bg-white px-2 py-2.5 text-xs font-medium text-ciruela transition has-[:checked]:border-rosa has-[:checked]:bg-rosa-claro/40"
+              className="flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-[#dfd3da] bg-white px-2 py-2.5 text-xs font-medium text-ciruela transition has-[:checked]:border-rosa has-[:checked]:bg-rosa-claro/30"
             >
               <input
                 type="radio"

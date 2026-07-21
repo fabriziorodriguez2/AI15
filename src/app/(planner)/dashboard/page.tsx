@@ -70,9 +70,9 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold text-ciruela">
+    <div className="space-y-7">
+      <div className="border-b border-[#eadfe5] pb-5">
+        <h1 className="font-display text-[28px] font-bold leading-tight text-ciruela">
           ¡Hola, {event.honoreeName}!
         </h1>
         <p className="mt-1 text-sm text-texto/70">
@@ -85,7 +85,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Progreso */}
-      <div className="card">
+      <div className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">
         <ProgressBar value={progress.percent} label="Progreso de la planificación" />
       </div>
 
@@ -125,7 +125,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Próxima tarea real */}
-      <div className="card">
+      <div className="rounded-xl border border-[#eadfe5] bg-white px-5 py-5 shadow-card">
         <p className="text-xs font-medium uppercase tracking-wide text-texto/50">
           Próxima tarea
         </p>
@@ -162,7 +162,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Etapas (derivadas del progreso real) */}
-      <div className="card">
+      <div className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">
         <h2 className="mb-4 font-display text-lg font-bold text-ciruela">
           Etapas
         </h2>
@@ -204,9 +204,9 @@ export default function DashboardPage() {
             <Link
               key={link.href}
               href={link.href}
-              className="card flex flex-col items-center gap-2 py-6 text-center transition hover:border-rosa"
+              className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-xl border border-[#eadfe5] bg-white p-4 text-center shadow-card transition-colors hover:border-rosa/60 hover:bg-rosa-fondo"
             >
-              <span className="grid size-11 place-items-center rounded-xl bg-rosa-claro text-rosa">
+              <span className="grid size-10 place-items-center rounded-lg bg-rosa-fondo text-rosa">
                 <Icon size={20} aria-hidden="true" />
               </span>
               <span className="text-sm font-medium text-ciruela">

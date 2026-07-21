@@ -25,25 +25,25 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
 
   return (
     <div
-      className="absolute inset-0 z-40 flex flex-col justify-end bg-ciruela/30 sm:items-center sm:justify-center"
+      className="absolute inset-0 z-40 flex flex-col justify-end bg-[#2f202f]/45"
       role="dialog"
       aria-modal="true"
       aria-label={title}
       onClick={onClose}
     >
       <div
-        className="max-h-[85%] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-card"
+        className="max-h-[85%] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-soft"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold text-ciruela">
+          <h2 className="font-display text-xl font-bold text-ciruela">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="grid size-8 place-items-center rounded-full text-texto/60 hover:bg-rosa-fondo"
+            className="grid size-11 place-items-center rounded-xl text-texto/60 hover:bg-rosa-fondo"
           >
             <X size={18} aria-hidden="true" />
           </button>

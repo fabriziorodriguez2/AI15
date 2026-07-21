@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Wallet, Sparkles, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
-import { Illustration } from "@/components/brand/Illustration";
 import { DemoButton } from "@/components/brand/DemoButton";
 
 const BENEFITS = [
@@ -17,19 +17,19 @@ const BENEFITS = [
   },
   {
     icon: Sparkles,
-    title: "Recibí recomendaciones personalizadas",
-    text: "Muy pronto, una asistente de IA especializada en fiestas de 15.",
+    title: "Armá un plan a tu medida",
+    text: "La asistente usa tus datos para proponer un presupuesto y un cronograma.",
   },
 ];
 
 export default function LandingPage() {
   return (
     <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-rosa-claro bg-white/90 px-4 py-3 backdrop-blur">
+      <header className="flex min-h-14 shrink-0 items-center justify-between border-b border-[#eadfe5] bg-white px-4">
         <Logo size={28} />
         <Link
           href="/crear-evento"
-          className="text-xs font-semibold text-ciruela hover:text-rosa"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-ciruela hover:text-rosa"
         >
           Crear
         </Link>
@@ -37,52 +37,50 @@ export default function LandingPage() {
 
       <div className="flex-1 overflow-y-auto px-5 pb-8">
         {/* Hero */}
-        <section className="pt-8 text-center">
+        <section className="pt-7">
+          <div>
           <span className="chip">Planificador de fiestas de 15</span>
-          <h1 className="mt-4 font-display text-3xl font-bold leading-tight text-ciruela">
-            Planificá tu fiesta de 15 en un solo lugar.
+          <h1 className="mt-4 font-display text-[31px] font-bold leading-[1.08] text-ciruela">
+            Tu fiesta, organizada con claridad.
           </h1>
-          <p className="mx-auto mt-3 max-w-xs text-sm text-texto/70">
-            AI15 centraliza tu presupuesto, tus invitados, tus proveedores y tus
-            inspiraciones para que organizar tu fiesta sea claro y disfrutable.
+          <p className="mt-3 text-[15px] leading-6 text-texto/70">
+            Reuní el presupuesto, las tareas, los proveedores y las decisiones
+            en un mismo lugar. AI15 te acompaña con un plan hecho para vos.
           </p>
 
-          {/* Ilustración decorativa con SVG locales. */}
-          <div className="mx-auto mt-8 grid max-w-xs grid-cols-2 gap-3">
-            <Illustration
-              variant="vestido"
-              className="w-full rounded-2xl shadow-card"
-            />
-            <Illustration
-              variant="salon"
-              className="mt-6 w-full rounded-2xl shadow-card"
-            />
-            <Illustration
-              variant="torta"
-              className="w-full rounded-2xl shadow-card"
-            />
-            <Illustration
-              variant="flores"
-              className="mt-6 w-full rounded-2xl shadow-card"
-            />
-          </div>
-
-          <div className="mt-8 flex flex-col gap-3">
+          <div className="mt-5 flex flex-col gap-3">
             <Link href="/crear-evento" className="btn-primary w-full">
               Crear mi fiesta
               <ArrowRight size={18} aria-hidden="true" />
             </Link>
             <DemoButton className="w-full">Ver demo</DemoButton>
           </div>
+          </div>
+
+          <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#eadfe5] bg-white shadow-card">
+            <Image
+              src="/images/salon-quince-real.png"
+              alt="Salón real decorado para una fiesta de quince"
+              fill
+              priority
+              sizes="390px"
+              className="object-cover"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent px-4 pb-4 pt-10">
+              <p className="text-sm font-semibold text-white">
+                Imaginá tu noche. Organizala a tu manera.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Beneficios */}
-        <section className="mt-10 space-y-3" aria-label="Beneficios de AI15">
+        <section className="mt-8 divide-y divide-[#eadfe5] rounded-2xl border border-[#eadfe5] bg-white px-4" aria-label="Beneficios de AI15">
           {BENEFITS.map((benefit) => {
             const Icon = benefit.icon;
             return (
-              <div key={benefit.title} className="card flex items-start gap-3 p-4">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rosa-claro text-rosa">
+              <div key={benefit.title} className="flex items-start gap-3 py-4">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-rosa-fondo text-rosa">
                   <Icon size={19} aria-hidden="true" />
                 </span>
                 <div>

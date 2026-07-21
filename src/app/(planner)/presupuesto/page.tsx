@@ -172,10 +172,10 @@ export default function PresupuestoPage() {
       </div>
 
       {/* Distribución con IA */}
-      <div className="card mb-5 border-dorado/40 bg-gradient-to-br from-white to-rosa-fondo">
+      <div className="mb-6 rounded-xl border border-[#e2d3a8] bg-white p-5 shadow-card">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-dorado/15 text-dorado">
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-dorado/10 text-[#8f7420]">
               <Sparkles size={20} aria-hidden="true" />
             </span>
             <div>
@@ -282,7 +282,7 @@ export default function PresupuestoPage() {
       </h2>
 
       {expenses.length === 0 ? (
-        <div className="card py-10 text-center">
+        <div className="surface-section px-5 text-center">
           <p className="text-sm text-texto/60">
             Todavía no registraste gastos. Agregá el primero para empezar a
             controlar tu presupuesto.
@@ -293,9 +293,9 @@ export default function PresupuestoPage() {
           </button>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
           {expenses.map((expense) => (
-            <li key={expense.id} className="card flex items-center gap-3 p-4">
+            <li key={expense.id} className="flex min-h-16 items-center gap-3 py-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate text-sm font-semibold text-ciruela">
@@ -303,7 +303,7 @@ export default function PresupuestoPage() {
                   </p>
                   <span
                     className={cn(
-                      "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                      "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold",
                       STATUS_STYLES[expense.status],
                     )}
                   >
@@ -321,14 +321,14 @@ export default function PresupuestoPage() {
                 <button
                   onClick={() => openEdit(expense)}
                   aria-label="Editar gasto"
-                  className="grid size-8 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
+                  className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
                 >
                   <Pencil size={15} aria-hidden="true" />
                 </button>
                 <button
                   onClick={() => setToDelete(expense)}
                   aria-label="Eliminar gasto"
-                  className="grid size-8 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
+                  className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
                 >
                   <Trash2 size={15} aria-hidden="true" />
                 </button>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { poppins, playfair } from "./fonts";
+import { dmSans } from "./fonts";
 import { PhoneFrame } from "@/components/layout/PhoneFrame";
 import "./globals.css";
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`${poppins.variable} ${playfair.variable}`}>
+    <html lang="es" className={dmSans.variable}>
       <body className="h-[100dvh] overflow-hidden font-sans antialiased">
         <PhoneFrame>{children}</PhoneFrame>
       </body>

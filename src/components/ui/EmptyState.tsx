@@ -16,8 +16,8 @@ export function EmptyState({
   ctaHref,
 }: EmptyStateProps) {
   return (
-    <div className="card flex flex-col items-center gap-4 py-12 text-center">
-      <span className="grid size-16 place-items-center rounded-2xl bg-rosa-claro text-rosa">
+    <div className="flex flex-col items-center gap-4 rounded-xl border border-[#eadfe5] bg-white px-5 py-12 text-center shadow-card">
+      <span className="grid size-14 place-items-center rounded-xl bg-rosa-fondo text-rosa">
         <PartyPopper size={28} aria-hidden="true" />
       </span>
       <div>

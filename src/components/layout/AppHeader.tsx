@@ -9,12 +9,12 @@ export function AppHeader() {
   const { event } = useHydratedEvent();
 
   return (
-    <header className="flex shrink-0 items-center justify-between border-b border-rosa-claro bg-white/90 px-4 py-3 backdrop-blur">
+    <header className="flex min-h-14 shrink-0 items-center justify-between border-b border-[#eadfe5] bg-white px-4">
       <Link href="/" aria-label="Ir al inicio de AI15">
         <Logo size={28} />
       </Link>
       {event && (
-        <span className="max-w-[45%] truncate rounded-full bg-rosa-claro px-3 py-1 text-xs font-semibold text-ciruela">
+        <span className="max-w-[45%] truncate text-sm font-semibold text-ciruela">
           {event.honoreeName}
         </span>
       )}

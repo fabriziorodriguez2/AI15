@@ -104,7 +104,7 @@ export default function CronogramaPage() {
             onClick={() => setFilter(f.key)}
             aria-pressed={filter === f.key}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium transition",
+              "min-h-11 rounded-lg border px-3 py-1.5 text-xs font-semibold transition",
               filter === f.key
                 ? "border-rosa bg-rosa text-white"
                 : "border-rosa-claro bg-white text-ciruela hover:bg-rosa-claro/40",
@@ -116,7 +116,7 @@ export default function CronogramaPage() {
       </div>
 
       {tasks.length === 0 ? (
-        <div className="card py-10 text-center">
+        <div className="surface-section px-5 text-center">
           <p className="text-sm text-texto/60">
             Todavía no tenés tareas. Podés cargar una lista base sugerida
             (con fechas calculadas desde tu fiesta) o crear la tuya.
@@ -133,11 +133,11 @@ export default function CronogramaPage() {
           </div>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="card py-8 text-center text-sm text-texto/60">
+        <div className="surface-section px-5 text-center text-sm text-texto/60">
           No hay tareas en este filtro.
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
           {filtered.map((task) => {
             const overdue = isTaskOverdue(task);
             const due = parseEventDate(task.dueDate);
@@ -145,7 +145,7 @@ export default function CronogramaPage() {
               <li
                 key={task.id}
                 className={cn(
-                  "card p-4",
+                  "py-4",
                   task.status === "completed" && "opacity-70",
                 )}
               >
@@ -189,14 +189,14 @@ export default function CronogramaPage() {
                             setFormOpen(true);
                           }}
                           aria-label="Editar tarea"
-                          className="grid size-7 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
+                          className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
                         >
                           <Pencil size={14} aria-hidden="true" />
                         </button>
                         <button
                           onClick={() => setToDelete(task)}
                           aria-label="Eliminar tarea"
-                          className="grid size-7 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
+                          className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
                         >
                           <Trash2 size={14} aria-hidden="true" />
                         </button>
@@ -251,7 +251,7 @@ export default function CronogramaPage() {
                                 : "in_progress",
                             )
                           }
-                          className="rounded-full border border-rosa-claro px-2.5 py-1 text-[11px] font-medium text-ciruela hover:bg-rosa-claro/40"
+                          className="min-h-9 rounded-lg border border-rosa-claro px-2.5 py-1 text-[11px] font-medium text-ciruela hover:bg-rosa-claro/40"
                         >
                           {task.status === "in_progress"
                             ? "Marcar pendiente"
@@ -261,7 +261,7 @@ export default function CronogramaPage() {
                       {task.status === "completed" && (
                         <button
                           onClick={() => toggleTaskStatus(task.id, "pending")}
-                          className="inline-flex items-center gap-1 rounded-full border border-rosa-claro px-2.5 py-1 text-[11px] font-medium text-ciruela hover:bg-rosa-claro/40"
+                          className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-rosa-claro px-2.5 py-1 text-[11px] font-medium text-ciruela hover:bg-rosa-claro/40"
                         >
                           <RotateCcw size={11} aria-hidden="true" />
                           Reabrir

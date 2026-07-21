@@ -39,7 +39,7 @@ export default function PlanPage() {
       {aiPlan ? (
         <PlanView plan={aiPlan} currency={event.currency} />
       ) : (
-        <div className="card py-8 text-center text-sm text-texto/60">
+        <div className="surface-section px-5 text-center text-sm text-texto/60">
           Todavía no generaste tu plan. Usá el botón de arriba cuando tengas tu
           presupuesto y estilo definidos.
         </div>

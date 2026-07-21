@@ -67,7 +67,7 @@ export default function CuentaPage() {
       <PageHeader title="Cuenta" subtitle="Tus datos y preferencias." />
 
       <div className="space-y-6">
-        <div className="card">
+        <div className="surface-section">
           <h2 className="mb-4 font-display text-lg font-bold text-ciruela">
             Datos del evento
           </h2>
@@ -98,7 +98,7 @@ export default function CuentaPage() {
             <button
               type="button"
               onClick={() => setConfirmOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-[#c0392b]/30 px-6 py-3 text-sm font-semibold text-[#c0392b] transition hover:bg-[#c0392b]/5"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#c0392b]/30 px-5 py-2.5 text-[15px] font-semibold text-[#c0392b] transition hover:bg-[#c0392b]/5"
             >
               <Trash2 size={16} aria-hidden="true" />
               Borrar datos locales
@@ -106,9 +106,9 @@ export default function CuentaPage() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="surface-section">
           <div className="flex items-start gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rosa-claro text-rosa">
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-rosa-fondo text-rosa">
               <HardDrive size={20} aria-hidden="true" />
             </span>
             <div>

@@ -81,9 +81,9 @@ export default function InspiracionPage() {
         </button>
 
         {/* Análisis con IA: honestamente no disponible. */}
-        <div className="card border-dorado/40">
+        <div className="rounded-xl border border-[#e2d3a8] bg-white p-5 shadow-card">
           <div className="flex items-start gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-dorado/15 text-dorado">
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-dorado/10 text-[#8f7420]">
               <Sparkles size={20} aria-hidden="true" />
             </span>
             <div>
@@ -128,9 +128,9 @@ export default function InspiracionPage() {
             <h2 className="mb-3 font-display text-lg font-bold text-ciruela">
               Guardadas ({inspirations.length})
             </h2>
-            <ul className="space-y-2">
+            <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
               {inspirations.map((insp) => (
-                <li key={insp.id} className="card flex items-start gap-3 p-4">
+                <li key={insp.id} className="flex items-start gap-3 py-4">
                   <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-rosa-claro text-rosa">
                     <ImageIcon size={16} aria-hidden="true" />
                   </span>
@@ -145,7 +145,7 @@ export default function InspiracionPage() {
                   <button
                     onClick={() => deleteInspiration(insp.id)}
                     aria-label="Eliminar inspiración"
-                    className="grid size-8 shrink-0 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
+                    className="grid size-11 shrink-0 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
                   >
                     <Trash2 size={15} aria-hidden="true" />
                   </button>

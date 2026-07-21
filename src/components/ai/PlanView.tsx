@@ -54,7 +54,7 @@ export function PlanView({
       </div>
 
       {/* Resumen */}
-      <section className="card">
+      <section className="surface-section">
         <h2 className="font-display text-lg font-bold text-ciruela">Resumen</h2>
         <p className="mt-2 whitespace-pre-line text-sm text-texto/80">
           {plan.content.summary}
@@ -62,7 +62,7 @@ export function PlanView({
       </section>
 
       {/* Presupuesto */}
-      <section className="card">
+      <section className="surface-section">
         <div className="flex items-center gap-2">
           <Wallet size={18} className="text-rosa" aria-hidden="true" />
           <h2 className="font-display text-lg font-bold text-ciruela">
@@ -87,7 +87,7 @@ export function PlanView({
       </section>
 
       {/* Estética */}
-      <section className="card">
+      <section className="surface-section">
         <div className="flex items-center gap-2">
           <Palette size={18} className="text-rosa" aria-hidden="true" />
           <h2 className="font-display text-lg font-bold text-ciruela">
@@ -104,7 +104,7 @@ export function PlanView({
           {plan.content.styleProposal.palette.map((c, i) => (
             <span
               key={`${c}-${i}`}
-              className="rounded-full bg-rosa-fondo px-2.5 py-1 text-[11px] text-ciruela"
+              className="rounded-md bg-rosa-fondo px-2.5 py-1 text-[11px] text-ciruela"
             >
               {c}
             </span>
@@ -132,7 +132,7 @@ export function PlanView({
       </section>
 
       {/* Cronograma */}
-      <section className="card">
+      <section className="surface-section">
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <CalendarPlus size={18} className="text-rosa" aria-hidden="true" />
@@ -143,7 +143,7 @@ export function PlanView({
         </div>
         <ol className="space-y-2">
           {plan.content.timeline.map((t, i) => (
-            <li key={`${t.title}-${i}`} className="rounded-xl bg-rosa-fondo p-3">
+            <li key={`${t.title}-${i}`} className="border-b border-[#eadfe5] py-3 last:border-b-0">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold text-ciruela">{t.title}</p>
                 <time className="shrink-0 text-[11px] text-texto/50">
@@ -175,7 +175,7 @@ export function PlanView({
 
       {/* Recomendaciones */}
       {plan.content.recommendations.length > 0 && (
-        <section className="card">
+        <section className="surface-section">
           <div className="flex items-center gap-2">
             <Lightbulb size={18} className="text-rosa" aria-hidden="true" />
             <h2 className="font-display text-lg font-bold text-ciruela">
@@ -184,10 +184,10 @@ export function PlanView({
           </div>
           <ul className="mt-3 space-y-2">
             {plan.content.recommendations.map((r, i) => (
-              <li key={`${r.title}-${i}`} className="rounded-xl border border-rosa-claro p-3">
+              <li key={`${r.title}-${i}`} className="border-b border-[#eadfe5] py-3 last:border-b-0">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-semibold text-ciruela">{r.title}</p>
-                  <span className="shrink-0 rounded-full bg-rosa-claro px-2 py-0.5 text-[10px] font-semibold text-rosa">
+                  <span className="shrink-0 rounded-md bg-rosa-claro px-2 py-0.5 text-[10px] font-semibold text-rosa">
                     {PRIORITY_LABEL[r.priority] ?? r.priority}
                   </span>
                 </div>
@@ -200,7 +200,7 @@ export function PlanView({
 
       {/* Advertencias */}
       {plan.content.warnings.length > 0 && (
-        <section className="card border-dorado/40">
+        <section className="surface-section border-dorado/40">
           <div className="flex items-center gap-2">
             <AlertTriangle size={18} className="text-dorado" aria-hidden="true" />
             <h2 className="font-display text-lg font-bold text-ciruela">

@@ -15,16 +15,16 @@ const config: Config = {
         texto: "#333333",
       },
       fontFamily: {
-        sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
-        display: ["var(--font-playfair)", "Georgia", "serif"],
+        sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
       },
       borderRadius: {
         xl: "1rem",
         "2xl": "1.5rem",
       },
       boxShadow: {
-        card: "0 8px 24px -12px rgba(107, 72, 107, 0.18)",
-        soft: "0 2px 12px -6px rgba(107, 72, 107, 0.14)",
+        card: "0 1px 2px rgba(75, 51, 75, 0.05)",
+        soft: "0 1px 3px rgba(75, 51, 75, 0.10)",
       },
     },
   },

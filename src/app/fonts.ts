@@ -1,15 +1,8 @@
-import { Poppins, Playfair_Display } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 
-export const poppins = Poppins({
+export const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
-});
-
-export const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-playfair",
+  variable: "--font-dm-sans",
   display: "swap",
 });

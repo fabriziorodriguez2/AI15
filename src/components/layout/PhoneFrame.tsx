@@ -8,9 +8,26 @@
  */
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#f0dbe6] via-[#ecd5e0] to-[#e6d4e0] p-0 lg:p-6">
-      <div className="relative flex h-[100dvh] w-full max-w-[440px] flex-col overflow-hidden bg-rosa-fondo lg:h-[calc(100dvh-3rem)] lg:rounded-[2.5rem] lg:shadow-2xl lg:ring-1 lg:ring-black/5">
-        {children}
+    <div className="flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-[#dceaf2] p-2">
+      <div className="relative flex h-[calc(100dvh-1rem)] w-full max-w-[430px] flex-col overflow-hidden rounded-[2.8rem] border-[6px] border-[#171717] bg-rosa-fondo shadow-[0_22px_55px_rgba(32,43,54,0.28)]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 z-50 flex h-8 items-center justify-between px-6 text-[10px] font-bold text-[#171717]"
+        >
+          <span>9:41</span>
+          <span className="tracking-[0.12em]">●●●</span>
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1.5 z-50 h-[22px] w-[88px] -translate-x-1/2 rounded-full bg-[#111111]"
+        />
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden pt-8">
+          {children}
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-1.5 left-1/2 z-50 h-1 w-28 -translate-x-1/2 rounded-full bg-[#171717]"
+        />
       </div>
     </div>
   );

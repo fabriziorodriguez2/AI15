@@ -132,7 +132,7 @@ export default function ProveedoresPage() {
             onClick={() => setTab(key)}
             aria-pressed={tab === key}
             className={cn(
-              "flex-1 rounded-full border px-3 py-2 text-sm font-medium transition",
+              "min-h-11 flex-1 rounded-xl border px-3 py-2 text-sm font-semibold transition",
               tab === key
                 ? "border-rosa bg-rosa text-white"
                 : "border-rosa-claro bg-white text-ciruela hover:bg-rosa-claro/40",
@@ -145,7 +145,7 @@ export default function ProveedoresPage() {
 
       {tab === "mios" ? (
         providers.length === 0 ? (
-          <div className="card py-10 text-center">
+          <div className="surface-section px-5 text-center">
             <p className="text-sm text-texto/60">
               Todavía no cargaste proveedores. Agregá los tuyos con sus datos
               reales para compararlos y seleccionarlos.
@@ -156,11 +156,11 @@ export default function ProveedoresPage() {
             </button>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="grid gap-3">
             {providers.map((provider) => {
               const selected = selectedByProviderId.get(provider.id);
               return (
-                <li key={provider.id} className="card p-5">
+                <li key={provider.id} className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <span className="chip mb-1.5">
@@ -177,14 +177,14 @@ export default function ProveedoresPage() {
                           setFormOpen(true);
                         }}
                         aria-label="Editar proveedor"
-                        className="grid size-8 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
+                        className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-rosa-fondo hover:text-ciruela"
                       >
                         <Pencil size={15} aria-hidden="true" />
                       </button>
                       <button
                         onClick={() => setToDelete(provider)}
                         aria-label="Eliminar proveedor"
-                        className="grid size-8 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
+                        className="grid size-11 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
                       >
                         <Trash2 size={15} aria-hidden="true" />
                       </button>
@@ -224,7 +224,7 @@ export default function ProveedoresPage() {
                               status: e.target.value as SelectedProviderStatus,
                             })
                           }
-                          className="rounded-full border border-rosa-claro bg-white px-3 py-1.5 text-xs font-medium text-ciruela"
+                          className="min-h-11 rounded-xl border border-[#dfd3da] bg-white px-3 py-1.5 text-xs font-medium text-ciruela"
                         >
                           {(
                             Object.keys(
@@ -248,7 +248,7 @@ export default function ProveedoresPage() {
                         onClick={() =>
                           selectProvider(provider.id, provider.category)
                         }
-                        className="inline-flex items-center gap-1.5 rounded-full bg-rosa-claro px-3 py-1.5 text-xs font-semibold text-rosa hover:bg-rosa/20"
+                        className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-rosa-claro px-3 py-1.5 text-xs font-semibold text-rosa hover:bg-rosa/20"
                       >
                         <Heart size={13} aria-hidden="true" />
                         Seleccionar

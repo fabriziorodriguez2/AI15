@@ -42,14 +42,14 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-ciruela/30 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-[#2f202f]/45 p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-title"
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-card"
+        className="w-full max-w-sm rounded-2xl border border-[#eadfe5] bg-white p-6 shadow-soft"
         onClick={(e) => e.stopPropagation()}
       >
         <span className="grid size-11 place-items-center rounded-xl bg-[#c0392b]/10 text-[#c0392b]">
@@ -73,7 +73,7 @@ export function ConfirmDialog({
           </button>
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-full bg-[#c0392b] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#a93226]"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#c0392b] px-5 py-2.5 text-[15px] font-semibold text-white transition hover:bg-[#a93226]"
             onClick={onConfirm}
           >
             {confirmLabel}

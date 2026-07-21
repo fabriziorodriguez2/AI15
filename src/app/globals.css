@@ -25,6 +25,19 @@ body {
 
 /* Foco visible y consistente para navegación con teclado. */
 @layer base {
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
   :where(a, button, input, textarea, select, [tabindex]):focus-visible {
     outline: 2px solid var(--color-rosa);
     outline-offset: 2px;
@@ -34,27 +47,31 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-rosa px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#f2597f] focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-rosa px-5 py-2.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#ed5d84] active:bg-[#dc4f76] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-rosa/40 bg-white px-6 py-3 text-sm font-semibold text-ciruela transition hover:border-rosa hover:bg-rosa-claro/40 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#e5d8df] bg-white px-5 py-2.5 text-[15px] font-semibold text-ciruela transition-colors hover:border-rosa/60 hover:bg-rosa-fondo active:bg-rosa-claro/40 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .card {
-    @apply rounded-2xl border border-rosa-claro bg-white p-6 shadow-card;
+    @apply rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card;
+  }
+
+  .surface-section {
+    @apply rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full bg-rosa-claro px-3 py-1 text-xs font-medium text-ciruela;
+    @apply inline-flex items-center gap-1 rounded-md bg-rosa-claro/70 px-2.5 py-1 text-xs font-semibold text-ciruela;
   }
 
   .field-label {
-    @apply mb-1.5 block text-sm font-medium text-ciruela;
+    @apply mb-2 block text-sm font-semibold text-ciruela;
   }
 
   .field-input {
-    @apply w-full rounded-xl border border-rosa-claro bg-white px-4 py-2.5 text-sm text-texto transition placeholder:text-texto/40 focus:border-rosa focus:outline-none focus:ring-2 focus:ring-rosa/30;
+    @apply min-h-12 w-full rounded-xl border border-[#dfd3da] bg-white px-4 py-3 text-[16px] text-texto transition placeholder:text-texto/40 focus:border-rosa focus:outline-none focus:ring-2 focus:ring-rosa/15;
   }
 
   .field-error {

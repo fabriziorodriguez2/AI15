@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/utils/currency";
 /** Tarjeta de un proveedor del catálogo (datos ficticios). */
 export function ProviderCard({ provider }: { provider: Provider }) {
   return (
-    <article className="card flex flex-col gap-3 p-5">
+    <article className="flex flex-col gap-3 rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">
       <div className="flex items-start justify-between gap-2">
         <div>
           <span className="chip mb-1.5">
@@ -16,10 +16,12 @@ export function ProviderCard({ provider }: { provider: Provider }) {
             {provider.name}
           </h3>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-lg bg-dorado/10 px-2 py-1 text-xs font-semibold text-dorado">
-          <Star size={13} fill="currentColor" aria-hidden="true" />
-          {provider.rating.toFixed(1)}
-        </span>
+        {provider.rating !== undefined && (
+          <span className="inline-flex items-center gap-1 rounded-md bg-dorado/10 px-2 py-1 text-xs font-semibold text-[#8f7420]">
+            <Star size={13} fill="currentColor" aria-hidden="true" />
+            {provider.rating.toFixed(1)}
+          </span>
+        )}
       </div>
 
       <p className="text-sm text-texto/70">{provider.description}</p>
@@ -41,7 +43,7 @@ export function ProviderCard({ provider }: { provider: Provider }) {
         {provider.tags.map((tag) => (
           <span
             key={tag}
-            className="rounded-full bg-rosa-fondo px-2 py-0.5 text-[11px] text-ciruela"
+            className="rounded-md bg-rosa-fondo px-2 py-0.5 text-[11px] text-ciruela"
           >
             {tag}
           </span>

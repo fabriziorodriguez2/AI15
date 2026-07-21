@@ -64,9 +64,9 @@ export function FileUpload({ onFileReady }: FileUploadProps) {
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-rosa/40 bg-rosa-fondo px-6 py-12 text-center transition hover:border-rosa hover:bg-rosa-claro/30"
+          className="flex min-h-52 w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-rosa/35 bg-white px-6 py-10 text-center transition hover:border-rosa hover:bg-rosa-fondo"
         >
-          <span className="grid size-14 place-items-center rounded-2xl bg-white text-rosa shadow-soft">
+          <span className="grid size-14 place-items-center rounded-xl bg-rosa-fondo text-rosa">
             <ImagePlus size={26} aria-hidden="true" />
           </span>
           <span className="text-sm font-semibold text-ciruela">
@@ -77,7 +77,7 @@ export function FileUpload({ onFileReady }: FileUploadProps) {
           </span>
         </button>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-rosa-claro bg-white">
+        <div className="overflow-hidden rounded-xl border border-[#eadfe5] bg-white">
           {/* Previsualización local; no se sube a ningún servidor. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -97,7 +97,7 @@ export function FileUpload({ onFileReady }: FileUploadProps) {
             <button
               type="button"
               onClick={clear}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#c0392b]/30 px-4 py-2 text-xs font-semibold text-[#c0392b] transition hover:bg-[#c0392b]/5"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-[#c0392b]/30 px-4 py-2 text-xs font-semibold text-[#c0392b] transition hover:bg-[#c0392b]/5"
             >
               <X size={14} aria-hidden="true" />
               Eliminar
