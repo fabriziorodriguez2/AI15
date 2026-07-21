@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-rosa: #ff6b91;
+  --color-rosa-claro: #f8e1ec;
+  --color-rosa-fondo: #fff6f9;
+  --color-dorado: #d4af37;
+  --color-ciruela: #6b486b;
+  --color-texto: #333333;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-rosa-fondo);
+  color: var(--color-texto);
+  font-feature-settings: "kern";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Foco visible y consistente para navegación con teclado. */
+@layer base {
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-rosa);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-rosa px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#f2597f] focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-rosa/40 bg-white px-6 py-3 text-sm font-semibold text-ciruela transition hover:border-rosa hover:bg-rosa-claro/40 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .card {
+    @apply rounded-2xl border border-rosa-claro bg-white p-6 shadow-card;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full bg-rosa-claro px-3 py-1 text-xs font-medium text-ciruela;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-ciruela;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-rosa-claro bg-white px-4 py-2.5 text-sm text-texto transition placeholder:text-texto/40 focus:border-rosa focus:outline-none focus:ring-2 focus:ring-rosa/30;
+  }
+
+  .field-error {
+    @apply mt-1 text-xs font-medium text-[#c0392b];
+  }
+}
