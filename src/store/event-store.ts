@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type {
   AIBudgetDistribution,
   AIPlan,
@@ -25,7 +24,6 @@ import type { ProviderFormInput } from "@/lib/validations/provider";
 import { generateId } from "@/lib/utils/id";
 import { computeInputFingerprint } from "@/lib/utils/fingerprint";
 import { buildSeedTasks } from "@/lib/utils/timeline";
-import { persistedStateSchema } from "@/lib/validations/persisted";
 import { buildDemoEvent } from "@/data/demo-event";
 
 interface Collections {
@@ -173,11 +171,26 @@ function withOutdatedFlags(c: Collections): Partial<Collections> {
 
 const now = () => new Date().toISOString();
 
-export const useEventStore = create<EventState>()(
-  persist(
-    (set, get) => ({
-      ...EMPTY,
-      hasHydrated: false,
+function buildHardcodedState(): Collections {
+  const event = buildDemoEvent();
+  const tasks: PlanningTask[] = buildSeedTasks(event.id, event.eventDate).map(
+    (task, index) => ({
+      ...task,
+      id: `demo-task-${index + 1}`,
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt,
+    }),
+  );
+  return { ...EMPTY, event, tasks };
+}
+
+/**
+ * Store de sesión con un usuario fijo. No utiliza localStorage: al recargar la
+ * aplicación se restaura el perfil demo y sus datos iniciales.
+ */
+export const useEventStore = create<EventState>((set, get) => ({
+      ...buildHardcodedState(),
+      hasHydrated: true,
 
       createEvent: (input) => {
         const timestamp = now();
@@ -236,7 +249,7 @@ export const useEventStore = create<EventState>()(
         set({ event, tasks, ...withOutdatedFlags(next) });
       },
 
-      clearEvent: () => set({ ...EMPTY }),
+      clearEvent: () => set({ ...buildHardcodedState() }),
 
       setProfilePhoto: (dataUrl) => {
         const event = get().event;
@@ -291,14 +304,7 @@ export const useEventStore = create<EventState>()(
       },
 
       loadDemoEvent: () => {
-        const event = buildDemoEvent();
-        const seeds = buildSeedTasks(event.id, event.eventDate).map((s) => ({
-          ...s,
-          id: generateId("task"),
-          createdAt: now(),
-          updatedAt: now(),
-        }));
-        set({ ...EMPTY, event, tasks: seeds });
+        set({ ...buildHardcodedState() });
       },
 
       addExpense: (input) => {
@@ -639,48 +645,4 @@ export const useEventStore = create<EventState>()(
       clearAIBudget: () => set({ aiBudget: null }),
 
       setHasHydrated: (value) => set({ hasHydrated: value }),
-    }),
-    {
-      name: "ai15-event",
-      version: 2,
-      partialize: (state) => ({
-        event: state.event,
-        expenses: state.expenses,
-        tasks: state.tasks,
-        guests: state.guests,
-        decisions: state.decisions,
-        inspirations: state.inspirations,
-        providers: state.providers,
-        selectedProviders: state.selectedProviders,
-        aiPlan: state.aiPlan,
-        aiBudget: state.aiBudget,
-      }),
-      // Migración desde el esquema previo (solo `{ event }`, clave "ai15-event").
-      migrate: (persisted): Collections => {
-        const parsed = persistedStateSchema.safeParse(persisted);
-        if (parsed.success) {
-          return {
-            ...EMPTY,
-            ...parsed.data,
-            aiPlan: (parsed.data.aiPlan as AIPlan | null) ?? null,
-          } as Collections;
-        }
-        // Intento de recuperar al menos el evento del formato viejo.
-        const maybeEvent = (persisted as { event?: unknown } | null)?.event;
-        const legacy = persistedStateSchema.safeParse({ event: maybeEvent });
-        if (legacy.success) {
-          return { ...EMPTY, event: legacy.data.event };
-        }
-        return { ...EMPTY };
-      },
-      onRehydrateStorage: () => (state) => {
-        if (!state) return;
-        // Recalcular banderas de desactualización tras rehidratar.
-        const flags = withOutdatedFlags(state);
-        if (flags.aiPlan) state.aiPlan = flags.aiPlan;
-        if (flags.aiBudget) state.aiBudget = flags.aiBudget;
-        state.setHasHydrated(true);
-      },
-    },
-  ),
-);
+    }));

@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>AI15 — Entrega Obligatorio 2</title>
+  <style>
+    :root {
+      --raspberry: #cd5782;
+      --raspberry-dark: #a93f67;
+      --cookie: #dcd3aa;
+      --mist: #c7dad8;
+      --mallow: #f0eef3;
+      --ink: #2f3332;
+      --muted: #69716f;
+      --line: #dedfdc;
+      --paper: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #dde9ec; color: var(--ink); }
+    body { font-family: "Segoe UI", Arial, sans-serif; font-size: 9.5pt; line-height: 1.45; }
+    @page { size: A4; margin: 0; }
+    .page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 8mm;
+      padding: 18mm 17mm 15mm;
+      overflow: hidden;
+      background: var(--paper);
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+    .page::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4mm;
+      background: linear-gradient(90deg, var(--raspberry) 0 42%, var(--cookie) 42% 67%, var(--mist) 67%);
+    }
+    .cover::before { height: 100%; background: linear-gradient(145deg, #fff 0 52%, #f6f1f4 52% 100%); }
+    .cover::after {
+      content: "";
+      position: absolute;
+      right: -35mm;
+      bottom: -32mm;
+      width: 125mm;
+      height: 125mm;
+      border-radius: 50%;
+      background: var(--raspberry);
+      opacity: .94;
+    }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7mm; }
+    .page-header img { width: 29mm; height: auto; }
+    .page-kicker { color: var(--raspberry); font-size: 7.5pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .footer { position: absolute; left: 17mm; right: 17mm; bottom: 7mm; display: flex; justify-content: space-between; color: #8a908e; font-size: 7pt; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 5mm; font-size: 27pt; line-height: 1.05; letter-spacing: -.035em; }
+    h2 { margin-bottom: 3mm; font-size: 20pt; line-height: 1.08; letter-spacing: -.025em; }
+    h3 { margin-bottom: 2mm; font-size: 12pt; line-height: 1.2; }
+    h4 { margin: 0 0 1mm; font-size: 9pt; }
+    p { margin-bottom: 3mm; }
+    ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+    li { margin-bottom: 1.5mm; }
+    .lead { font-size: 13pt; line-height: 1.45; color: #4f5755; }
+    .muted { color: var(--muted); }
+    .small { font-size: 8pt; }
+    .tiny { font-size: 7.2pt; }
+    .accent { color: var(--raspberry-dark); }
+    .strong { font-weight: 750; }
+    .tag { display: inline-block; margin: 0 1.5mm 1.5mm 0; padding: 1.2mm 2.4mm; border-radius: 999px; background: var(--mallow); color: var(--raspberry-dark); font-size: 7.5pt; font-weight: 700; }
+    .status { display: inline-flex; align-items: center; gap: 1.5mm; padding: 1.2mm 2.4mm; border-radius: 999px; background: #e7f3ee; color: #1f6d51; font-size: 7.5pt; font-weight: 750; }
+    .status::before { content: "✓"; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+    .card { padding: 4mm; border: .35mm solid var(--line); border-radius: 4mm; background: #fff; }
+    .soft { background: #faf8fa; border-color: #eee7eb; }
+    .pink { background: #f8eaf0; border-color: #edd2de; }
+    .beige { background: #f2eedc; border-color: #e4dbb7; }
+    .mist { background: #eaf2f1; border-color: #d2e3e1; }
+    .quote { padding: 4mm 5mm; border-left: 1.4mm solid var(--raspberry); background: #faf6f8; font-size: 11pt; line-height: 1.45; }
+    .metric { padding: 4mm; border-radius: 4mm; background: #faf8fa; }
+    .metric b { display: block; margin-bottom: 1mm; font-size: 21pt; color: var(--raspberry-dark); }
+    .table { width: 100%; border-collapse: collapse; font-size: 8.2pt; }
+    .table th { padding: 2.3mm; background: var(--ink); color: white; text-align: left; }
+    .table td { padding: 2.3mm; border-bottom: .3mm solid var(--line); vertical-align: top; }
+    .table tr:nth-child(even) td { background: #fafafa; }
+    .timeline { border-left: .7mm solid var(--mist); margin-left: 2mm; padding-left: 5mm; }
+    .timeline-item { position: relative; margin-bottom: 4mm; }
+    .timeline-item::before { content: ""; position: absolute; left: -6.5mm; top: 1.2mm; width: 2.6mm; height: 2.6mm; border-radius: 50%; background: var(--raspberry); }
+    .flow { display: flex; align-items: stretch; gap: 2mm; }
+    .flow .node { flex: 1; padding: 3mm 2mm; border-radius: 3mm; background: #faf8fa; border: .3mm solid var(--line); text-align: center; font-size: 7.7pt; font-weight: 700; }
+    .flow .arrow { display: grid; place-items: center; color: var(--raspberry); font-size: 14pt; }
+    .code { white-space: pre-wrap; margin: 0; padding: 4mm; border-radius: 3mm; background: #252a29; color: #edf4f2; font: 7.2pt/1.45 Consolas, monospace; }
+    .phone-shot { display: block; max-height: 164mm; max-width: 100%; margin: auto; border-radius: 4mm; }
+    .shot-caption { margin-top: 2mm; color: var(--muted); font-size: 7.5pt; text-align: center; }
+    .swatch { min-height: 28mm; padding: 3mm; border-radius: 3mm; display: flex; align-items: flex-end; font-weight: 750; }
+    .logo-big { width: 50mm; position: relative; z-index: 2; }
+    .cover-content { position: relative; z-index: 2; width: 142mm; margin-top: 32mm; }
+    .cover h1 { margin-top: 15mm; font-size: 41pt; max-width: 145mm; }
+    .cover .subtitle { max-width: 118mm; font-size: 15pt; line-height: 1.45; color: #515856; }
+    .cover-meta { position: absolute; z-index: 3; left: 17mm; bottom: 18mm; display: grid; grid-template-columns: auto 1fr; gap: 2mm 6mm; font-size: 9pt; }
+    .cover-meta dt { color: #777e7c; }
+    .cover-meta dd { margin: 0; font-weight: 700; }
+    .mock-post { position: relative; height: 142mm; padding: 6mm; border-radius: 7mm; overflow: hidden; background: #f8f4f6; border: .35mm solid #e8dfe4; }
+    .mock-post .brand { width: 27mm; }
+    .mock-post .hero-copy { margin-top: 13mm; font-size: 25pt; line-height: 1.04; font-weight: 800; letter-spacing: -.04em; }
+    .mock-post .cta { position: absolute; left: 6mm; bottom: 7mm; padding: 3mm 5mm; border-radius: 999px; background: var(--raspberry); color: white; font-weight: 750; }
+    .mock-story { position: relative; height: 142mm; padding: 6mm; border-radius: 7mm; overflow: hidden; background: linear-gradient(180deg, var(--raspberry) 0 48%, #f8f4f6 48%); color: white; }
+    .mock-story .brand { width: 27mm; }
+    .mock-story .question { margin-top: 18mm; font-size: 22pt; line-height: 1.05; font-weight: 800; }
+    .poll { margin-top: 25mm; display: grid; gap: 3mm; }
+    .poll span { padding: 3mm; border-radius: 3mm; background: white; color: var(--ink); text-align: center; font-weight: 700; }
+    .email { padding: 5mm; border-radius: 5mm; border: .35mm solid var(--line); background: white; }
+    .email .subject { margin-bottom: 4mm; padding-bottom: 3mm; border-bottom: .3mm solid var(--line); font-weight: 750; }
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { position: relative; padding-left: 6mm; }
+    .checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--raspberry); font-weight: 800; }
+    .warning { padding: 3mm 4mm; border-radius: 3mm; background: #fff4de; border: .3mm solid #e8c97d; color: #6f5821; }
+    .note { padding: 3mm 4mm; border-radius: 3mm; background: #eef5f4; border: .3mm solid #cadfdd; }
+    .spacer { height: 3mm; }
+    .closing .grid-2 { gap: 3mm; }
+    .closing .card { padding: 3mm; }
+    .closing .card p { margin-bottom: 0; }
+    .closing .checklist li { margin-bottom: .6mm; }
+    .closing .quote { margin-top: 4mm !important; padding: 3mm 4mm; }
+    .closing h3 { margin-top: 4mm !important; }
+    .closing .warning { margin-top: 2mm !important; padding: 2mm 3mm; }
+    @media print {
+      html, body { background: white; }
+      .page { margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <section class="page cover">
+    <div class="cover-content">
+      <img class="logo-big" src="../public/logo-ai15.svg" alt="AI15" />
+      <div class="page-kicker" style="margin-top:16mm">Obligatorio 2 · Diseño Interactivo</div>
+      <h1>Producto digital, inteligencia artificial y comunicación</h1>
+      <p class="subtitle">Documentación integral de AI15, una beta mobile para organizar fiestas de quince con presupuesto, cronograma y asistencia personalizada mediante IA.</p>
+      <div style="margin-top:9mm">
+        <span class="tag">Beta operativa</span>
+        <span class="tag">Mobile first</span>
+        <span class="tag">Gemini integrado</span>
+        <span class="tag">Uruguay</span>
+      </div>
+    </div>
+    <dl class="cover-meta">
+      <dt>Estudiante</dt><dd>____________________________</dd>
+      <dt>Curso</dt><dd>Diseño Interactivo</dd>
+      <dt>Proyecto</dt><dd>AI15</dd>
+      <dt>Modalidad</dt><dd>Opción 1 — evolución del Obligatorio 1</dd>
+      <dt>Fecha</dt><dd>Julio de 2026</dd>
+    </dl>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Resumen ejecutivo</span></header>
+    <h2>Una organizadora clara para una experiencia compleja</h2>
+    <p class="lead">AI15 centraliza la planificación de una fiesta de quince y transforma datos reales de la usuaria en una guía accionable, coherente y adaptada a su fecha y presupuesto.</p>
+    <div class="grid-3" style="margin:7mm 0">
+      <div class="metric"><b>1</b><span>espacio para presupuesto, invitados, tareas, proveedores e ideas</span></div>
+      <div class="metric"><b>2</b><span>prestaciones reales de IA: plan integral y distribución presupuestal</span></div>
+      <div class="metric"><b>100%</b><span>interfaz presentada dentro de una experiencia mobile</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="card pink">
+        <h3>Valor principal</h3>
+        <p>Reducir desorden y ansiedad al convertir información dispersa en decisiones, prioridades y próximos pasos visibles.</p>
+      </div>
+      <div class="card mist">
+        <h3>Diferencial</h3>
+        <p>Especialización en fiestas de quince uruguayas, tono rioplatense y recomendaciones que respetan decisiones ya confirmadas.</p>
+      </div>
+    </div>
+    <h3 style="margin-top:7mm">Estado entregado</h3>
+    <ul class="checklist grid-2">
+      <li>Onboarding explicativo de tres pantallas.</li>
+      <li>Usuario demo hardcodeado y perfil editable en sesión.</li>
+      <li>Dashboard con progreso derivado de acciones reales.</li>
+      <li>Presupuesto, gastos y saldo disponible.</li>
+      <li>Distribución presupuestal generada por IA.</li>
+      <li>Plan integral personalizado generado por IA.</li>
+      <li>Cronograma relativo a la fecha de la fiesta.</li>
+      <li>Lista simple de invitados y confirmaciones.</li>
+      <li>Decisiones, inspiraciones y proveedores propios.</li>
+      <li>Demo precargada sin credenciales.</li>
+    </ul>
+    <div class="note" style="margin-top:5mm"><b>Tipo de entrega:</b> beta operativa del proyecto del Obligatorio 1, reconstruida visual y funcionalmente. La aplicación compila para producción y ofrece un flujo evaluable de punta a punta.</div>
+    <footer class="footer"><span>AI15 · Obligatorio 2</span><span>2</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Problema y oportunidad</span></header>
+    <h2>Planificar una fiesta implica demasiadas decisiones desconectadas</h2>
+    <p>Una fiesta de quince combina presupuesto familiar, fechas, invitados, proveedores y una gran cantidad de decisiones estéticas. En la práctica, esa información suele distribuirse entre chats, notas, planillas, capturas de pantalla y perfiles de redes sociales.</p>
+    <div class="quote">“Queremos una fiesta que se sienta nuestra, pero necesitamos saber qué decidir primero y cuánto podemos gastar sin perder el control.”</div>
+    <h3 style="margin-top:7mm">Necesidad abordada</h3>
+    <div class="grid-2">
+      <div class="card"><h4>Desorden informativo</h4><p class="small">Datos y acuerdos en múltiples canales, difíciles de consultar en conjunto.</p></div>
+      <div class="card"><h4>Presupuesto incierto</h4><p class="small">Dificultad para asignar dinero y entender cuánto queda disponible.</p></div>
+      <div class="card"><h4>Plazos extensos</h4><p class="small">No siempre está claro qué debería resolverse 12, 6 o 1 mes antes.</p></div>
+      <div class="card"><h4>Decisiones cruzadas</h4><p class="small">Vestido, salón, decoración e invitaciones necesitan coherencia.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Público objetivo</h3>
+    <p><b>Usuario principal:</b> adolescentes de 14–15 años en Uruguay que organizan su fiesta desde el celular y valoran una experiencia visual, simple y personal.</p>
+    <p><b>Usuario secundario:</b> familiares adultos que participan en presupuesto, contrataciones y confirmaciones.</p>
+    <div class="grid-3" style="margin-top:5mm">
+      <div class="card beige"><h4>Necesita</h4><p class="small">Claridad, orden, orientación y control compartido.</p></div>
+      <div class="card pink"><h4>Le interesa</h4><p class="small">Estética, personalización, inspiración y herramientas móviles.</p></div>
+      <div class="card mist"><h4>Se comporta</h4><p class="small">Consulta desde el teléfono, guarda referencias y decide en familia.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Objetivo del producto</h3>
+    <p class="lead">Dar una visión única y comprensible de la fiesta, y usar IA únicamente donde aporta una síntesis que sería difícil construir manualmente.</p>
+    <footer class="footer"><span>AI15 · Problema, usuario y solución</span><span>3</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">User persona</span></header>
+    <h2>Sofía y su familia</h2>
+    <div class="grid-2">
+      <div class="card pink" style="min-height:58mm">
+        <div style="font-size:32pt;font-weight:800;color:var(--raspberry)">S</div>
+        <h3>Sofía · 14 años · Montevideo</h3>
+        <p>Usa el celular como dispositivo principal, sigue cuentas de inspiración y quiere una fiesta elegante con detalles románticos. Su madre acompaña la planificación y controla el presupuesto.</p>
+      </div>
+      <div>
+        <span class="tag">Mobile first</span><span class="tag">Visual</span><span class="tag">Organizada</span>
+        <h3 style="margin-top:4mm">Objetivos</h3>
+        <ul><li>Definir una estética propia.</li><li>Saber qué falta y qué viene después.</li><li>Participar sin sentirse abrumada.</li><li>Poder conversar decisiones con su familia.</li></ul>
+        <h3>Frustraciones</h3>
+        <ul><li>Demasiadas listas y capturas separadas.</li><li>No entender cómo repartir el dinero.</li><li>Recomendaciones genéricas que ignoran sus decisiones.</li></ul>
+      </div>
+    </div>
+    <h3 style="margin-top:7mm">Journey principal</h3>
+    <table class="table">
+      <thead><tr><th>Momento</th><th>Necesidad</th><th>Respuesta de AI15</th><th>Emoción buscada</th></tr></thead>
+      <tbody>
+        <tr><td>Descubrimiento</td><td>Entender para qué sirve.</td><td>Onboarding en tres ideas simples.</td><td>“Esto me puede ayudar”.</td></tr>
+        <tr><td>Configuración</td><td>Contar lo esencial sin cansarse.</td><td>Formulario progresivo de tres pasos.</td><td>Control.</td></tr>
+        <tr><td>Planificación</td><td>Ver estado, saldo y próximos pasos.</td><td>Dashboard y módulos enfocados.</td><td>Calma.</td></tr>
+        <tr><td>Orientación</td><td>Transformar datos en un plan.</td><td>IA con contexto y resultados estructurados.</td><td>Confianza.</td></tr>
+        <tr><td>Seguimiento</td><td>Actualizar decisiones reales.</td><td>Gastos, tareas, confirmaciones y alertas.</td><td>Avance.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Criterios derivados de la persona</h3>
+    <div class="grid-2">
+      <div class="card"><b>Lenguaje</b><p class="small">Español rioplatense, cercano y directo, sin infantilizar.</p></div>
+      <div class="card"><b>Interacción</b><p class="small">Controles táctiles, bloques breves y navegación inferior.</p></div>
+      <div class="card"><b>Información</b><p class="small">Priorizar una decisión por vez y mostrar progreso real.</p></div>
+      <div class="card"><b>Confianza</b><p class="small">Diferenciar datos propios, ejemplos e información generada por IA.</p></div>
+    </div>
+    <p class="tiny muted" style="margin-top:5mm">La persona es una construcción de diseño basada en el público definido; no representa una entrevista real. Se documenta así para no presentar investigación inexistente.</p>
+    <footer class="footer"><span>AI15 · Persona y recorrido</span><span>4</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Investigación y competencia</span></header>
+    <h2>El espacio entre la inspiración y la gestión</h2>
+    <p>Se realizó una exploración comparativa de categorías de herramientas que hoy suelen resolver partes aisladas del problema. El objetivo no fue copiar una interfaz, sino detectar oportunidades de integración.</p>
+    <table class="table" style="margin-top:6mm">
+      <thead><tr><th>Alternativa</th><th>Fortaleza</th><th>Limitación para este caso</th><th>Oportunidad AI15</th></tr></thead>
+      <tbody>
+        <tr><td>Pinterest / Instagram</td><td>Gran volumen de inspiración visual.</td><td>No convierte ideas en presupuesto, tareas o decisiones.</td><td>Relacionar inspiración descripta con el plan.</td></tr>
+        <tr><td>Planillas</td><td>Flexibilidad y cálculo.</td><td>Requieren estructura manual y son poco amigables para adolescentes.</td><td>Presupuesto guiado y lectura inmediata.</td></tr>
+        <tr><td>Trello / Notion</td><td>Organización y colaboración general.</td><td>No conocen hitos ni lenguaje de una fiesta de quince.</td><td>Cronograma especializado según la fecha.</td></tr>
+        <tr><td>Apps de bodas/eventos</td><td>Checklists y proveedores.</td><td>Foco cultural y experiencia distintos; recomendaciones genéricas.</td><td>Contexto uruguayo, UYU/USD y tono local.</td></tr>
+        <tr><td>Chatbots generales</td><td>Respuestas flexibles.</td><td>No conservan necesariamente las restricciones del proyecto ni garantizan formato.</td><td>Contexto curado, JSON validado y decisiones confirmadas.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:8mm">Hallazgos de diseño</h3>
+    <div class="grid-2">
+      <div class="card pink"><h4>1. La inspiración sola no organiza</h4><p class="small">El valor aparece cuando una idea impacta en una decisión, una categoría del presupuesto o una tarea.</p></div>
+      <div class="card beige"><h4>2. La personalización necesita límites</h4><p class="small">La IA debe respetar presupuesto y decisiones confirmadas, no inventar negocios ni disponibilidad.</p></div>
+      <div class="card mist"><h4>3. El progreso debe ser verificable</h4><p class="small">Se calcula con gastos, tareas, decisiones, proveedores e invitados reales, no con un porcentaje decorativo.</p></div>
+      <div class="card"><h4>4. La familia también es usuaria</h4><p class="small">Los textos y datos deben ser comprensibles para la adolescente y para quien administra el dinero.</p></div>
+    </div>
+    <div class="warning" style="margin-top:7mm"><b>Alcance de la investigación:</b> análisis exploratorio de productos y patrones de uso. Como siguiente etapa se recomienda validar con 5–8 duplas de quinceañera/familiar mediante tareas observadas.</div>
+    <footer class="footer"><span>AI15 · Análisis competitivo exploratorio</span><span>5</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Propuesta de valor</span></header>
+    <h2>Tu fiesta, organizada con claridad</h2>
+    <div class="quote">Para quinceañeras y familias que necesitan coordinar una celebración compleja, AI15 reúne la planificación en una experiencia mobile y usa inteligencia artificial para proponer un plan coherente con sus datos reales.</div>
+    <h3 style="margin-top:7mm">Tres promesas de producto</h3>
+    <div class="grid-3">
+      <div class="card pink"><h3>Organizá</h3><p>Fecha, invitados, proveedores, ideas y decisiones siempre a mano.</p></div>
+      <div class="card beige"><h3>Controlá</h3><p>Visualizá gastos, saldo y distribución del presupuesto por categoría.</p></div>
+      <div class="card mist"><h3>Decidí</h3><p>Recibí prioridades y recomendaciones adaptadas a tu fiesta.</p></div>
+    </div>
+    <h3 style="margin-top:8mm">Mapa funcional de la beta</h3>
+    <div class="grid-2">
+      <div class="card"><h4>Inicio y perfil</h4><ul class="small"><li>Onboarding.</li><li>Formulario del evento.</li><li>Foto personalizable.</li><li>Cuenta y edición.</li></ul></div>
+      <div class="card"><h4>Seguimiento</h4><ul class="small"><li>Dashboard.</li><li>Progreso real.</li><li>Próxima tarea real.</li><li>Lista de invitados.</li></ul></div>
+      <div class="card"><h4>Planificación</h4><ul class="small"><li>Gastos y presupuesto.</li><li>Cronograma relativo.</li><li>Decisiones por categoría.</li><li>Proveedores propios y demo.</li></ul></div>
+      <div class="card"><h4>Inteligencia artificial</h4><ul class="small"><li>Plan integral.</li><li>Distribución de presupuesto.</li><li>Resultados guardados.</li><li>Detección de resultado desactualizado.</li></ul></div>
+    </div>
+    <h3 style="margin-top:7mm">Principios de experiencia</h3>
+    <p><span class="tag">Mobile siempre</span><span class="tag">Una acción principal</span><span class="tag">Datos honestos</span><span class="tag">IA explicable</span><span class="tag">Tono cercano</span></p>
+    <p class="muted">El catálogo de ejemplos se identifica como ficticio; las imágenes de inspiración permanecen locales; las acciones de IA explican qué datos serán enviados antes de generar.</p>
+    <footer class="footer"><span>AI15 · Solución y diferencial</span><span>6</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Evolución del proyecto</span></header>
+    <h2>De primera versión a beta operativa</h2>
+    <p>La modalidad elegida es la Opción 1. La nueva versión no se limita a corregir la interfaz: reorganiza el flujo, amplía las prestaciones e integra IA real evaluable.</p>
+    <table class="table" style="margin-top:6mm">
+      <thead><tr><th>Dimensión</th><th>Versión inicial</th><th>Beta actual</th></tr></thead>
+      <tbody>
+        <tr><td>Inicio</td><td>Landing con dos CTA inmediatos.</td><td>Onboarding progresivo; los CTA aparecen al final.</td></tr>
+        <tr><td>Diseño</td><td>Composición más cercana a una web genérica.</td><td>Marco de teléfono, navegación inferior y componentes táctiles.</td></tr>
+        <tr><td>Identidad</td><td>Isotipo genérico.</td><td>Logo oficial SVG, paleta definida y dirección editorial minimalista.</td></tr>
+        <tr><td>Datos</td><td>Métricas y estados principalmente demostrativos.</td><td>Gastos, tareas, decisiones, invitados y progreso derivados del store.</td></tr>
+        <tr><td>Cronograma</td><td>Lista breve con fechas exactas.</td><td>29 tareas agrupadas por períodos relativos y recalculables.</td></tr>
+        <tr><td>IA</td><td>Infraestructura prevista.</td><td>Dos endpoints funcionales con Gemini, salidas estructuradas y memoria de sesión.</td></tr>
+        <tr><td>Seguridad</td><td>Cliente servidor preparado.</td><td>Clave server-only, timeout, límites, validación y errores controlados.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:8mm">Mejoras surgidas de correcciones</h3>
+    <div class="timeline">
+      <div class="timeline-item"><h4>Comprensión inicial</h4><p class="small">Se incorporó una explicación gradual de funciones y beneficio antes de crear el evento.</p></div>
+      <div class="timeline-item"><h4>Personalización</h4><p class="small">El dashboard permite sumar una foto propia y presenta la fiesta como un espacio personal.</p></div>
+      <div class="timeline-item"><h4>Invitados</h4><p class="small">Se agregó una lista deliberadamente simple: nombre, confirmación y eliminación.</p></div>
+      <div class="timeline-item"><h4>Progreso y próxima tarea</h4><p class="small">Ambos responden al trabajo registrado; no se muestra un avance predeterminado.</p></div>
+      <div class="timeline-item"><h4>Cronograma</h4><p class="small">Los hitos responden a la fecha del evento y se agrupan por momentos comprensibles.</p></div>
+    </div>
+    <footer class="footer"><span>AI15 · Evolución respecto al Obligatorio 1</span><span>7</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Arquitectura de información</span></header>
+    <h2>Un flujo principal, módulos breves</h2>
+    <h3>Flujo de activación</h3>
+    <div class="flow" style="margin:5mm 0 8mm">
+      <div class="node">Onboarding<br><span class="muted">entender</span></div><div class="arrow">›</div>
+      <div class="node">Crear fiesta<br><span class="muted">configurar</span></div><div class="arrow">›</div>
+      <div class="node">Dashboard<br><span class="muted">orientarse</span></div><div class="arrow">›</div>
+      <div class="node">Módulos<br><span class="muted">registrar</span></div><div class="arrow">›</div>
+      <div class="node">Plan IA<br><span class="muted">decidir</span></div>
+    </div>
+    <h3>Navegación mobile</h3>
+    <div class="grid-2">
+      <div class="card pink"><h4>Barra primaria</h4><p class="small">Inicio · Plan · Presupuesto · Cronograma · Más</p><p class="tiny muted">Mantiene visibles los destinos más frecuentes y una quinta entrada para evitar saturación.</p></div>
+      <div class="card mist"><h4>Hoja “Más”</h4><p class="small">Invitados · Proveedores · Inspiración · Decisiones · Cuenta</p><p class="tiny muted">Agrupa funciones secundarias sin perder acceso táctil.</p></div>
+    </div>
+    <h3 style="margin-top:8mm">Flujo de IA</h3>
+    <div class="flow" style="margin:5mm 0">
+      <div class="node">Datos del evento</div><div class="arrow">›</div>
+      <div class="node">Confirmación y consentimiento</div><div class="arrow">›</div>
+      <div class="node">Ruta del servidor</div><div class="arrow">›</div>
+      <div class="node">Gemini + esquema JSON</div><div class="arrow">›</div>
+      <div class="node">Validación y guardado</div>
+    </div>
+    <h3 style="margin-top:8mm">Estados contemplados</h3>
+    <div class="grid-4">
+      <div class="card"><b>Vacío</b><p class="tiny">Guía para comenzar.</p></div>
+      <div class="card"><b>Cargando</b><p class="tiny">Feedback durante IA.</p></div>
+      <div class="card"><b>Error</b><p class="tiny">Mensaje y reintento.</p></div>
+      <div class="card"><b>Desactualizado</b><p class="tiny">Aviso cuando cambian datos.</p></div>
+    </div>
+    <div class="note" style="margin-top:8mm"><b>Decisión central:</b> no usar un chat abierto. La IA trabaja sobre formularios y datos del dominio, devolviendo bloques que la interfaz puede validar, guardar e incorporar al cronograma.</div>
+    <footer class="footer"><span>AI15 · Flujos y navegación</span><span>8</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Integración de inteligencia artificial</span></header>
+    <h2>IA aplicada a decisiones con contexto</h2>
+    <p class="lead">La IA forma parte de la experiencia evaluable: la usuaria genera resultados desde la aplicación y puede conservarlos, revisarlos e incorporar sus tareas.</p>
+    <div class="grid-2" style="margin-top:6mm">
+      <div class="card pink">
+        <h3>Plan integral</h3>
+        <p>Produce resumen, presupuesto, cronograma priorizado, propuesta estética, recomendaciones y advertencias.</p>
+        <span class="tag">POST /api/ai/plan</span>
+      </div>
+      <div class="card beige">
+        <h3>Distribución inteligente</h3>
+        <p>Propone porcentajes y justificaciones por categoría, adaptados a presupuesto, gastos y contexto.</p>
+        <span class="tag">POST /api/ai/budget</span>
+      </div>
+    </div>
+    <h3 style="margin-top:8mm">Servicio y modelo</h3>
+    <table class="table">
+      <tbody>
+        <tr><td><b>Servicio</b></td><td>Proxy estudiantil de Gemini / Google Vertex.</td></tr>
+        <tr><td><b>Modelo</b></td><td><code>gemini-2.5-flash</code>.</td></tr>
+        <tr><td><b>Ubicación</b></td><td>Rutas de servidor de Next.js; no se llama al modelo desde el navegador.</td></tr>
+        <tr><td><b>Formato</b></td><td>JSON estructurado mediante <code>responseSchema</code> y segunda validación con Zod.</td></tr>
+        <tr><td><b>Persistencia</b></td><td>El resultado válido se guarda en el store local y queda marcado si cambia el contexto.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Por qué usar IA</h3>
+    <p>La planificación requiere combinar muchas variables y mantener coherencia entre presupuesto, tiempo, estética y decisiones. Una plantilla fija puede cubrir hitos básicos; la IA aporta priorización y síntesis contextual. Los cálculos críticos y la validación permanecen en código determinista.</p>
+    <div class="warning" style="margin-top:5mm"><b>No se delega todo al modelo:</b> la suma del presupuesto se corrige y verifica en código; las fechas y formas se validan; las decisiones confirmadas se envían como restricciones.</div>
+    <footer class="footer"><span>AI15 · Feature real de IA</span><span>9</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Implementación técnica de IA</span></header>
+    <h2>Del dato local a una respuesta validada</h2>
+    <div class="timeline">
+      <div class="timeline-item"><h4>1. Construcción del contexto</h4><p>Se seleccionan solo los campos necesarios del evento, gastos, tareas, decisiones, proveedores elegidos y descripciones de inspiración.</p></div>
+      <div class="timeline-item"><h4>2. Validación de entrada</h4><p>La ruta valida el body con Zod y rechaza solicitudes incompletas o sin presupuesto.</p></div>
+      <div class="timeline-item"><h4>3. Prompt y esquema</h4><p>Se combinan reglas del sistema, contexto y tarea. Gemini recibe un esquema JSON obligatorio.</p></div>
+      <div class="timeline-item"><h4>4. Proxy seguro</h4><p>La llamada se ejecuta únicamente en servidor con Authorization Bearer, timeout y límite de tamaño.</p></div>
+      <div class="timeline-item"><h4>5. Curaduría automática</h4><p>La respuesta se parsea, valida de nuevo y la distribución se ajusta para sumar 100%.</p></div>
+      <div class="timeline-item"><h4>6. Presentación y memoria</h4><p>El resultado se muestra en componentes del producto y se conserva durante la sesión junto con una huella del contexto.</p></div>
+    </div>
+    <h3 style="margin-top:6mm">Entradas principales</h3>
+    <p><span class="tag">Fecha</span><span class="tag">Ubicación</span><span class="tag">Invitados</span><span class="tag">Presupuesto</span><span class="tag">Estilos</span><span class="tag">Colores</span><span class="tag">Gastos</span><span class="tag">Decisiones</span><span class="tag">Proveedores seleccionados</span><span class="tag">Descripciones</span></p>
+    <h3 style="margin-top:5mm">Salidas estructuradas</h3>
+    <div class="grid-3">
+      <div class="card"><b>Plan</b><p class="tiny">Resumen, cronograma, estética y recomendaciones.</p></div>
+      <div class="card"><b>Presupuesto</b><p class="tiny">Categoría, porcentaje y justificación.</p></div>
+      <div class="card"><b>Warnings</b><p class="tiny">Riesgos, incertidumbre o información faltante.</p></div>
+    </div>
+    <h3 style="margin-top:6mm">Controles técnicos</h3>
+    <table class="table">
+      <tbody>
+        <tr><td>Límite de prompt</td><td>16.000 caracteres</td><td>Control de costo y abuso.</td></tr>
+        <tr><td>Timeout</td><td>45 segundos</td><td>Evita esperas indefinidas.</td></tr>
+        <tr><td>Salida máxima</td><td>4.096 tokens</td><td>Respuesta acotada.</td></tr>
+        <tr><td>Temperatura</td><td>0,5 presupuesto / 0,6 plan</td><td>Equilibrio entre consistencia y variedad.</td></tr>
+      </tbody>
+    </table>
+    <footer class="footer"><span>AI15 · Arquitectura de IA</span><span>10</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Privacidad, seguridad y límites</span></header>
+    <h2>Confianza antes que automatización invisible</h2>
+    <h3>Medidas implementadas</h3>
+    <ul class="checklist grid-2">
+      <li>Clave en <code>.env.local</code>, ignorada por Git.</li>
+      <li>Sin prefijo <code>NEXT_PUBLIC_</code>.</li>
+      <li>Módulo de IA marcado como <code>server-only</code>.</li>
+      <li>La key nunca se registra ni vuelve al cliente.</li>
+      <li>Errores externos convertidos en mensajes genéricos.</li>
+      <li>Consentimiento visible antes de generar.</li>
+      <li>Contactos e imágenes excluidos del contexto.</li>
+      <li>Validación de entrada y salida con esquemas.</li>
+    </ul>
+    <h3 style="margin-top:7mm">Posibles errores del modelo</h3>
+    <table class="table">
+      <thead><tr><th>Riesgo</th><th>Mitigación actual</th><th>Responsabilidad de la usuaria</th></tr></thead>
+      <tbody>
+        <tr><td>Recomendación poco realista.</td><td>Reglas de presupuesto, contexto y warnings.</td><td>Revisar antes de contratar o comprar.</td></tr>
+        <tr><td>Porcentajes que no suman 100.</td><td>Normalización determinista posterior.</td><td>Comparar con gastos reales.</td></tr>
+        <tr><td>Fecha incoherente.</td><td>Formato estructurado y validación.</td><td>Confirmar plazos con proveedores.</td></tr>
+        <tr><td>Contradicción estética.</td><td>Decisiones confirmadas como restricciones.</td><td>Marcar decisiones importantes.</td></tr>
+        <tr><td>Servicio no disponible.</td><td>Timeout, estado de error y reintento.</td><td>Volver a intentar más tarde.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Límites declarados de la beta</h3>
+    <div class="grid-2">
+      <div class="card beige"><h4>Usuario hardcodeado</h4><p class="small">No hay autenticación ni sincronización. Al recargar se restaura el perfil demo original.</p></div>
+      <div class="card beige"><h4>Proveedores</h4><p class="small">Los ejemplos son ficticios y están etiquetados. La usuaria puede cargar proveedores reales propios.</p></div>
+      <div class="card beige"><h4>Imágenes</h4><p class="small">No se realiza análisis visual con IA; se usan descripciones escritas para mantener privacidad y alcance.</p></div>
+      <div class="card beige"><h4>Decisiones sensibles</h4><p class="small">AI15 orienta, pero no reemplaza contratos, presupuestos formales ni asesoramiento profesional.</p></div>
+    </div>
+    <footer class="footer"><span>AI15 · Seguridad y transparencia</span><span>11</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Branding y dirección creativa</span></header>
+    <h2>Editorial minimalism + quiet luxury</h2>
+    <p class="lead">La marca busca elegancia, organización y sofisticación sin recurrir a una estética tecnológica o excesivamente “generada por IA”.</p>
+    <div class="grid-4" style="margin-top:7mm">
+      <div class="swatch" style="background:#cd5782;color:#fff">Wild Raspberry<br>#CD5782</div>
+      <div class="swatch" style="background:#dcd3aa">Sugar Cookie<br>#DCD3AA</div>
+      <div class="swatch" style="background:#c7dad8">Morning Mist<br>#C7DAD8</div>
+      <div class="swatch" style="background:#f0eef3">Mallow Fluff<br>#F0EEF3</div>
+    </div>
+    <h3 style="margin-top:8mm">Sistema visual</h3>
+    <div class="grid-2">
+      <div class="card"><h4>Logo</h4><img src="../public/logo-ai15.svg" alt="Logo AI15" style="width:48mm;margin:5mm 0" /><p class="small">Archivo vectorial oficial, utilizado de forma consistente en onboarding, encabezados y formularios.</p></div>
+      <div class="card"><h4>Tipografía</h4><p style="font-size:21pt;font-weight:800;letter-spacing:-.04em;margin:5mm 0">DM Sans</p><p class="small">Familia sans serif legible en pantallas pequeñas, con títulos compactos y cuerpo de lectura simple.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Tono de voz</h3>
+    <table class="table">
+      <thead><tr><th>Es</th><th>No es</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Cercano</td><td>Infantil</td><td>“Organizá tu fiesta sin complicaciones.”</td></tr>
+        <tr><td>Claro</td><td>Técnico</td><td>“Faltan 237 días para tu fiesta.”</td></tr>
+        <tr><td>Elegante</td><td>Recargado</td><td>Frases breves y colores suaves.</td></tr>
+        <tr><td>Honesto</td><td>Promocional en exceso</td><td>“Ejemplos para inspirarte. No son negocios reales.”</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Concepto de marca</h3>
+    <p><b>Naming:</b> “AI15” conecta inteligencia artificial con el rito central del producto. <b>Storytelling:</b> no se trata de planificar una fiesta perfecta, sino de convertir decisiones compartidas en una noche propia, clara y posible.</p>
+    <footer class="footer"><span>AI15 · Identidad visual y verbal</span><span>12</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Prototipo operativo · acceso</span></header>
+    <h2>Comprender antes de completar</h2>
+    <div class="grid-2">
+      <figure style="margin:0"><img class="phone-shot" src="assets/onboarding.png" alt="Onboarding de AI15" /><figcaption class="shot-caption">Onboarding: valor del producto y CTA progresivo.</figcaption></figure>
+      <figure style="margin:0"><img class="phone-shot" src="assets/crear-evento.png" alt="Formulario para crear fiesta" /><figcaption class="shot-caption">Configuración en tres pasos con validación.</figcaption></figure>
+    </div>
+    <div class="grid-2" style="margin-top:6mm">
+      <div class="card pink"><h4>Decisión UX</h4><p class="small">“Crear mi fiesta” y “Ver demo” se muestran solo al terminar el onboarding, después de explicar organización, presupuesto y plan personalizado.</p></div>
+      <div class="card mist"><h4>Accesibilidad mobile</h4><p class="small">Áreas táctiles amplias, jerarquía tipográfica visible, progreso del formulario y retorno claro.</p></div>
+    </div>
+    <footer class="footer"><span>AI15 · Evidencia capturada desde la aplicación</span><span>13</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Prototipo operativo · planificación</span></header>
+    <h2>Datos reales, lectura inmediata</h2>
+    <div class="grid-2">
+      <figure style="margin:0"><img class="phone-shot" src="assets/dashboard.png" alt="Dashboard AI15" /><figcaption class="shot-caption">Dashboard con cuenta regresiva, foto y métricas.</figcaption></figure>
+      <figure style="margin:0"><img class="phone-shot" src="assets/presupuesto.png" alt="Presupuesto AI15" /><figcaption class="shot-caption">Saldo, gastos y distribución inteligente.</figcaption></figure>
+    </div>
+    <div class="grid-2" style="margin-top:6mm">
+      <div class="card"><h4>Progreso verificable</h4><p class="small">Se deriva de gastos, plan, decisiones, proveedores, inspiraciones, invitados y tareas completadas.</p></div>
+      <div class="card"><h4>Presupuesto dual</h4><p class="small">La app diferencia gastos registrados de la propuesta porcentual generada por IA.</p></div>
+    </div>
+    <footer class="footer"><span>AI15 · Evidencia capturada desde la aplicación</span><span>14</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Prototipo operativo · cronograma</span></header>
+    <h2>El tiempo se explica de forma relativa</h2>
+    <div class="grid-2">
+      <figure style="margin:0"><img class="phone-shot" src="assets/cronograma.png" alt="Cronograma de AI15" /><figcaption class="shot-caption">Tareas agrupadas por etapa de planificación.</figcaption></figure>
+      <div>
+        <div class="card pink"><h3>12 meses antes</h3><p class="small">Presupuesto, fecha, primera lista, tema y reserva del salón.</p></div>
+        <div class="card beige" style="margin-top:3mm"><h3>9–10 meses</h3><p class="small">Fotografía, video, música, catering, decoración y vestido.</p></div>
+        <div class="card mist" style="margin-top:3mm"><h3>6–8 meses</h3><p class="small">Acompañantes, accesorios, invitaciones y ensayos.</p></div>
+        <div class="card" style="margin-top:3mm"><h3>3–4 meses</h3><p class="small">Menú, pruebas, belleza y confirmación de proveedores.</p></div>
+        <div class="card" style="margin-top:3mm"><h3>2 meses → día</h3><p class="small">Canciones, cronograma, mesas, RSVP, pagos, vestido, peinado y maquillaje.</p></div>
+        <h3 style="margin-top:7mm">Comportamiento</h3>
+        <ul class="small"><li>Las fechas se calculan desde la fiesta.</li><li>Si cambia la fecha, las tareas base se recalculan.</li><li>Se pueden editar, borrar y cambiar de estado.</li><li>La próxima tarea del dashboard surge de pendientes reales.</li></ul>
+      </div>
+    </div>
+    <footer class="footer"><span>AI15 · Evidencia y lógica temporal</span><span>15</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Estrategia de comunicación</span></header>
+    <h2>De la ansiedad a la claridad</h2>
+    <div class="grid-2">
+      <div class="card pink"><h3>Objetivo</h3><p>Lograr que quinceañeras y familias reconozcan el desorden de planificar como un problema resoluble y prueben la demo.</p></div>
+      <div class="card mist"><h3>Mensaje rector</h3><p><b>“Tu fiesta, organizada con claridad.”</b><br>Una herramienta que acompaña decisiones sin quitar protagonismo.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Posicionamiento</h3>
+    <p>AI15 se presenta como una compañera de planificación especializada, no como una organizadora que decide por la usuaria ni como un software empresarial.</p>
+    <table class="table" style="margin-top:5mm">
+      <thead><tr><th>Etapa</th><th>Objetivo</th><th>Canal / pieza</th><th>CTA</th><th>Métrica</th></tr></thead>
+      <tbody>
+        <tr><td>Descubrimiento</td><td>Instalar el problema.</td><td>Reel + publicación.</td><td>Conocé AI15.</td><td>Alcance y reproducciones.</td></tr>
+        <tr><td>Interés</td><td>Mostrar utilidad.</td><td>Carrusel de funciones.</td><td>Probá la demo.</td><td>Clics al producto.</td></tr>
+        <tr><td>Activación</td><td>Crear una fiesta.</td><td>Onboarding + demo.</td><td>Crear mi fiesta.</td><td>Eventos creados.</td></tr>
+        <tr><td>Retención</td><td>Volver a planificar.</td><td>Email recordatorio futuro.</td><td>Ver próximos pasos.</td><td>Retorno semanal.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Pilares de contenido</h3>
+    <div class="grid-3">
+      <div class="card"><h4>Orden</h4><p class="small">Checklists, plazos y pequeñas decisiones accionables.</p></div>
+      <div class="card"><h4>Presupuesto</h4><p class="small">Consejos para conversar prioridades en familia.</p></div>
+      <div class="card"><h4>Identidad</h4><p class="small">Ideas para que la fiesta represente a la quinceañera.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Canales prioritarios</h3>
+    <p><span class="tag">Instagram</span><span class="tag">TikTok / Reels</span><span class="tag">Landing mobile</span><span class="tag">Email de acompañamiento</span></p>
+    <p class="muted">La selección responde al uso cotidiano del celular y a la naturaleza visual de la categoría. El contenido lleva a una prueba concreta, no solo a reconocimiento de marca.</p>
+    <footer class="footer"><span>AI15 · Marketing y posicionamiento</span><span>16</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Piezas de comunicación</span></header>
+    <h2>Conceptos listos para campaña</h2>
+    <div class="grid-2">
+      <div class="mock-post">
+        <img class="brand" src="../public/logo-ai15.svg" alt="AI15" />
+        <div class="page-kicker" style="margin-top:14mm">Publicación de lanzamiento</div>
+        <div class="hero-copy">Menos pestañas.<br>Más claridad.<br>Más tu fiesta.</div>
+        <p style="margin-top:6mm;width:65mm">Presupuesto, invitados, ideas y próximos pasos en un solo lugar.</p>
+        <div class="cta">Probá AI15</div>
+      </div>
+      <div class="mock-story">
+        <img class="brand" src="../public/logo-ai15.svg" alt="AI15" />
+        <div class="question">¿Qué te preocupa más al organizar tus 15?</div>
+        <div class="poll"><span>El presupuesto</span><span>No saber por dónde empezar</span></div>
+      </div>
+    </div>
+    <h3 style="margin-top:6mm">Pieza de email / seguimiento</h3>
+    <div class="email">
+      <div class="subject">Asunto: Tu próxima decisión está más cerca ✨</div>
+      <p>Hola, Sofi:</p>
+      <p>Tu fiesta ya tiene una base. Entrá a AI15 para revisar el próximo paso, actualizar tus confirmaciones y ver cómo viene el presupuesto.</p>
+      <span class="tag" style="background:var(--raspberry);color:white">Ver mi planificación</span>
+    </div>
+    <p class="tiny muted" style="margin-top:4mm">Estas piezas son propuestas conceptuales de campaña maquetadas para la entrega. La dirección creativa reutiliza identidad, tono y propuesta de valor del producto.</p>
+    <footer class="footer"><span>AI15 · Publicación, historia y email</span><span>17</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Lanzamiento y automatización</span></header>
+    <h2>Una activación gradual y medible</h2>
+    <h3>Plan de lanzamiento</h3>
+    <div class="timeline">
+      <div class="timeline-item"><h4>Semana 1 · expectativa</h4><p>Historias con pain points y encuesta sobre presupuesto/organización.</p></div>
+      <div class="timeline-item"><h4>Semana 2 · demostración</h4><p>Reel corto mostrando onboarding, dashboard y generación de presupuesto.</p></div>
+      <div class="timeline-item"><h4>Semana 3 · beta</h4><p>Invitación a un grupo reducido de quinceañeras y familiares para probar tareas concretas.</p></div>
+      <div class="timeline-item"><h4>Semana 4 · aprendizaje</h4><p>Revisión de fricciones, lenguaje, errores de IA y retorno al producto.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Automatización propuesta para una siguiente etapa</h3>
+    <div class="flow" style="margin:5mm 0">
+      <div class="node">Landing</div><div class="arrow">›</div>
+      <div class="node">Formulario de interés</div><div class="arrow">›</div>
+      <div class="node">Google Sheets</div><div class="arrow">›</div>
+      <div class="node">n8n</div><div class="arrow">›</div>
+      <div class="node">Email de bienvenida</div>
+    </div>
+    <div class="warning"><b>Estado:</b> esta automatización no forma parte de la beta actual. Se documenta como extensión coherente, ya que la consigna la considera opcional. No se presenta como implementada.</div>
+    <h3 style="margin-top:8mm">Evento y datos mínimos del flujo futuro</h3>
+    <table class="table">
+      <thead><tr><th>Dato</th><th>Uso</th><th>Cuidado</th></tr></thead>
+      <tbody>
+        <tr><td>Email</td><td>Enviar acceso y recordatorio.</td><td>Consentimiento y opción de baja.</td></tr>
+        <tr><td>Departamento</td><td>Entender cobertura geográfica.</td><td>No requiere ubicación exacta.</td></tr>
+        <tr><td>Fecha estimada</td><td>Segmentar contenido por etapa.</td><td>Evitar compartirla públicamente.</td></tr>
+        <tr><td>Origen</td><td>Medir campaña.</td><td>UTM sin identificación sensible.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Indicadores sugeridos</h3>
+    <p><span class="tag">CTR a demo</span><span class="tag">Eventos creados</span><span class="tag">Planes generados</span><span class="tag">Retorno semanal</span><span class="tag">Errores de IA</span></p>
+    <footer class="footer"><span>AI15 · Lanzamiento y flujo opcional</span><span>18</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Proceso y uso de IA</span></header>
+    <h2>Herramientas, prompts y curaduría</h2>
+    <h3>IA incorporada al producto</h3>
+    <p><b>Gemini 2.5 Flash:</b> recibe contexto acotado y genera el plan y la distribución presupuestal. El estudiante define reglas, esquema, validación y presentación.</p>
+    <h3 style="margin-top:5mm">IA utilizada durante el proceso</h3>
+    <table class="table">
+      <thead><tr><th>Herramienta</th><th>Contexto</th><th>Curaduría realizada</th></tr></thead>
+      <tbody>
+        <tr><td>ChatGPT / Codex</td><td>Ideación, estructura, asistencia de código y documentación.</td><td>Revisión del repositorio, ajuste de alcance, validación de build y descarte de afirmaciones no comprobables.</td></tr>
+        <tr><td>Generación de imagen de OpenAI</td><td>Fotografía ambiental del salón para onboarding.</td><td>Selección de una imagen coherente, uso no testimonial y recorte mobile.</td></tr>
+        <tr><td>Gemini</td><td>Feature evaluable dentro de AI15.</td><td>Prompt especializado, restricciones, JSON Schema, Zod y normalización.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Prompt principal del plan — estructura</h3>
+    <pre class="code">ROL: organizadora de fiestas de 15 de AI15.
+TONO: español rioplatense, cercano, claro y elegante.
+REGLAS: no inventar proveedores ni precios; no superar presupuesto;
+respetar decisiones confirmadas; priorizar por tiempo restante;
+mantener coherencia estética; devolver solo JSON válido.
+CONTEXTO: evento + gastos + decisiones + proveedores elegidos +
+descripciones de inspiración.
+TAREA: generar resumen, presupuesto, cronograma, propuesta estética,
+recomendaciones y advertencias.</pre>
+    <h3 style="margin-top:6mm">Decisiones de curaduría</h3>
+    <ul class="checklist grid-2"><li>No enviar imágenes ni contactos.</li><li>No permitir texto libre fuera del JSON.</li><li>No usar proveedores inventados.</li><li>Mostrar warnings del modelo.</li><li>Normalizar porcentajes con código.</li><li>Marcar resultados desactualizados.</li></ul>
+    <footer class="footer"><span>AI15 · Referencia responsable de IA</span><span>19</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Instalación y evaluación</span></header>
+    <h2>Cómo ejecutar y probar la beta</h2>
+    <h3>Requisitos</h3>
+    <p>Node.js 18.18 o superior (recomendado 20/22), npm 9 o superior y una API key válida del proxy estudiantil para probar generación.</p>
+    <h3 style="margin-top:5mm">Instalación</h3>
+    <pre class="code">npm install
+copy .env.example .env.local
+# completar GEMINI_PROXY_API_KEY sin prefijo NEXT_PUBLIC_
+npm run dev
+# abrir http://localhost:3000</pre>
+    <h3 style="margin-top:6mm">Variables necesarias</h3>
+    <table class="table">
+      <thead><tr><th>Variable</th><th>Función</th><th>Exposición</th></tr></thead>
+      <tbody>
+        <tr><td><code>GEMINI_PROXY_API_KEY</code></td><td>Autentica contra el proxy.</td><td>Solo servidor; no incluir en la entrega pública.</td></tr>
+        <tr><td><code>GEMINI_PROXY_BASE_URL</code></td><td>URL base del servicio.</td><td>Configuración de servidor.</td></tr>
+        <tr><td><code>GEMINI_TEXT_MODEL</code></td><td>Modelo por defecto.</td><td>Configuración de servidor.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Recorrido de prueba recomendado</h3>
+    <ol>
+      <li>Avanzar por las tres pantallas del onboarding.</li>
+      <li>Tocar <b>Ver demo</b> para cargar datos sin credenciales de usuario.</li>
+      <li>Revisar dashboard, presupuesto y cronograma.</li>
+      <li>Agregar un gasto y comprobar saldo/progreso.</li>
+      <li>Crear un invitado y marcar su confirmación.</li>
+      <li>Generar la distribución con IA desde Presupuesto.</li>
+      <li>Generar el plan desde Plan y, si corresponde, importar tareas.</li>
+      <li>Cambiar un dato del evento y verificar el aviso de plan desactualizado.</li>
+    </ol>
+    <div class="grid-2" style="margin-top:5mm">
+      <div class="card mist"><h4>Credenciales de prueba</h4><p class="small">No hay login. La demo funciona sin cuenta. La generación requiere la key entregada por el docente.</p></div>
+      <div class="card pink"><h4>Datos de ejemplo</h4><p class="small">“Sofi”, Montevideo, 150 invitados, presupuesto UYU 350.000 y fecha dinámica futura.</p></div>
+    </div>
+    <footer class="footer"><span>AI15 · Guía para evaluación externa</span><span>20</span></footer>
+  </section>
+
+  <section class="page">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Desarrollo, pruebas y aprendizajes</span></header>
+    <h2>Decisiones verificadas en código</h2>
+    <h3>Arquitectura y tecnologías</h3>
+    <p><span class="tag">Next.js 14</span><span class="tag">TypeScript estricto</span><span class="tag">React 18</span><span class="tag">Tailwind CSS</span><span class="tag">Zustand</span><span class="tag">React Hook Form</span><span class="tag">Zod</span><span class="tag">Lucide</span></p>
+    <div class="grid-2" style="margin-top:5mm">
+      <div class="card"><h4>Estado</h4><p class="small">Un store central en memoria, inicializado con un usuario fijo y datos reproducibles.</p></div>
+      <div class="card"><h4>Servidor</h4><p class="small">Rutas dinámicas para IA y módulo server-only para proteger credenciales.</p></div>
+      <div class="card"><h4>Interfaz</h4><p class="small">App Router, componentes reutilizables y marco mobile consistente.</p></div>
+      <div class="card"><h4>Dominio</h4><p class="small">Tipos separados para evento, gastos, tareas, invitados, decisiones, inspiración y proveedores.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Verificación realizada</h3>
+    <div class="status">Build de producción exitoso — 14 rutas generadas</div>
+    <p class="small" style="margin-top:3mm">Se ejecutó <code>npm run build</code> el 21/07/2026. La compilación, lint y chequeo de tipos finalizaron correctamente. Las capturas de este documento se generaron desde la build ejecutándose localmente.</p>
+    <h3 style="margin-top:7mm">Aprendizajes y dificultades</h3>
+    <table class="table">
+      <thead><tr><th>Situación</th><th>Decisión tomada</th><th>Aprendizaje</th></tr></thead>
+      <tbody>
+        <tr><td>La IA puede devolver formatos variables.</td><td>JSON Schema + Zod + normalización.</td><td>Una feature de IA necesita código de contención.</td></tr>
+        <tr><td>El progreso podía parecer arbitrario.</td><td>Derivarlo de acciones reales.</td><td>La confianza depende de trazabilidad.</td></tr>
+        <tr><td>El cronograma exacto era difícil de leer.</td><td>Agrupar por períodos relativos.</td><td>La información debe coincidir con el modelo mental.</td></tr>
+        <tr><td>No existe fuente real de proveedores.</td><td>Marcar ejemplos y permitir carga propia.</td><td>Es preferible declarar una limitación a inventar datos.</td></tr>
+      </tbody>
+    </table>
+    <footer class="footer"><span>AI15 · Implementación y reflexión</span><span>21</span></footer>
+  </section>
+
+  <section class="page closing">
+    <header class="page-header"><img src="../public/logo-ai15.svg" alt="AI15" /><span class="page-kicker">Roadmap y cierre</span></header>
+    <h2>Una beta sólida con próximos pasos claros</h2>
+    <div class="grid-2">
+      <div class="card pink"><h3>Prioridad 1</h3><p><b>Cuentas y nube.</b> Autenticación, base de datos y colaboración familiar entre dispositivos.</p></div>
+      <div class="card beige"><h3>Prioridad 2</h3><p><b>Proveedores reales.</b> Fuente verificada, fotos con permiso, cobertura y precios actualizados.</p></div>
+      <div class="card mist"><h3>Prioridad 3</h3><p><b>Validación con usuarios.</b> Pruebas moderadas con quinceañeras y familiares.</p></div>
+      <div class="card"><h3>Prioridad 4</h3><p><b>Automatización.</b> Captación, onboarding por email y recordatorios consentidos.</p></div>
+    </div>
+    <h3 style="margin-top:8mm">Checklist de la consigna</h3>
+    <ul class="checklist grid-2">
+      <li>Modalidad elegida.</li><li>Problema y necesidad.</li>
+      <li>Público objetivo.</li><li>User persona y pain points.</li>
+      <li>Análisis competitivo.</li><li>Propuesta de valor y diferencial.</li>
+      <li>Branding y tono.</li><li>Producto testeable.</li>
+      <li>Integración real de IA.</li><li>Servicio, modelo, datos y salidas.</li>
+      <li>Prompts principales.</li><li>Seguridad de API keys.</li>
+      <li>Limitaciones y errores.</li><li>Piezas de comunicación.</li>
+      <li>Estrategia de marketing.</li><li>Automatización documentada.</li>
+      <li>Instalación y ejecución.</li><li>Datos de ejemplo.</li>
+      <li>Proceso y decisiones.</li><li>Aprendizajes y roadmap.</li>
+    </ul>
+    <div class="quote" style="margin-top:8mm">AI15 no busca reemplazar las decisiones de una familia. Busca hacerlas visibles, ordenarlas y ofrecer una guía contextual para que la fiesta pueda sentirse propia y posible.</div>
+    <h3 style="margin-top:8mm">Archivos que acompañan esta documentación</h3>
+    <p><b>Código fuente completo</b> · <b>README e instrucciones</b> · <b>.env.example</b> · <b>datos demo</b> · <b>logo SVG</b> · <b>capturas de evidencia</b> · <b>documentación técnica en docs/</b>.</p>
+    <div class="warning" style="margin-top:5mm"><b>Completar antes de presentar:</b> nombre completo del estudiante y, si se publica la aplicación, URL del despliegue. La evaluación local ya está documentada en la página 20.</div>
+    <footer class="footer"><span>AI15 · Fin de la documentación</span><span>22</span></footer>
+  </section>
+</body>
+</html>

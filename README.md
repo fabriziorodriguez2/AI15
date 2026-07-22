@@ -16,13 +16,13 @@ más adelante. **Incluye:**
 
 - Landing de bienvenida con demo cargable.
 - Creación de evento en un formulario de 3 pasos (validado con Zod).
-- Persistencia temporal del evento en `localStorage` (Zustand persist).
+- Usuario demo hardcodeado y estado temporal de sesión con Zustand.
 - Dashboard con datos reales del evento y métricas de demostración.
 - Presupuesto con distribución de referencia y gráfico circular (CSS puro).
 - Catálogo de proveedores ficticios con filtros y búsqueda.
 - Pantalla de inspiración con carga y previsualización local de imágenes.
 - Cronograma con fechas calculadas a partir de la fecha de la fiesta.
-- Pantalla de cuenta con edición y borrado de datos locales.
+- Pantalla de cuenta con identificación del usuario demo y restauración.
 - Cliente de Gemini **solo servidor** listo para integrarse (sin llamadas aún).
 
 **No incluye todavía** (etapas futuras): autenticación real, Supabase/base de
@@ -35,7 +35,7 @@ generación real del plan con IA, automatizaciones ni panel administrativo.
 - TypeScript (modo estricto)
 - Tailwind CSS
 - React Hook Form + Zod + `@hookform/resolvers`
-- Zustand (con `persist`)
+- Zustand
 - Lucide React (iconos)
 - `next/font` (Poppins + Playfair Display)
 - ESLint
@@ -79,9 +79,9 @@ npm run lint    # Ejecuta ESLint
 
 ## Cómo cargar el evento demo
 
-En la landing (`/`), tocá **"Ver demo"**. Esto carga un evento ficticio en el
-store y te lleva al dashboard. También podés crear tu propio evento desde
-**"Crear mi fiesta"**.
+La aplicación ya inicia con el usuario fijo `Sofi` (`sofi@ai15.demo`). En la
+landing (`/`), tocá **"Ver demo"** para restaurar sus datos iniciales y entrar
+al dashboard. Los cambios duran durante la sesión y se reinician al recargar.
 
 ## Arquitectura resumida
 
@@ -104,10 +104,9 @@ src/
 docs/                         # Brief y registro de decisiones
 ```
 
-- El estado del evento vive en un único store de Zustand con `persist`. Ningún
-  componente accede directo a `localStorage`.
-- La lectura del evento se hace con `useHydratedEvent` para evitar errores de
-  hidratación entre servidor y cliente.
+- El estado vive en un único store de Zustand en memoria, inicializado con un
+  usuario hardcodeado. La aplicación no utiliza `localStorage`.
+- La lectura del evento se centraliza en `useHydratedEvent`.
 - Los datos ficticios están separados en `src/data/` y marcados como demo.
 
 ## Estado actual de la integración con IA

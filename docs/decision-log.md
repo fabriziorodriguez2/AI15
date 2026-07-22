@@ -9,14 +9,13 @@ Decisiones técnicas iniciales de la primera etapa.
 código exclusivo del servidor (clave para proteger la API key con
 `server-only`), y ofrece buenas herramientas de build y lint listas para usar.
 
-## 2. localStorage temporal vía Zustand persist
+## 2. Usuario demo hardcodeado y estado de sesión
 
-**Decisión:** guardar el evento en `localStorage` mediante un único store de
-Zustand con el middleware `persist`.
-**Motivo:** en esta etapa no hay autenticación ni base de datos. Zustand centraliza
-el estado, evita accesos dispersos a `localStorage` y facilita migrar a una API
-más adelante. Se agregó un flag `hasHydrated` y el hook `useHydratedEvent` para
-prevenir errores de hidratación entre servidor y cliente.
+**Decisión:** inicializar el store de Zustand con un usuario fijo y su evento de
+demostración, sin middleware de persistencia ni acceso a `localStorage`.
+**Motivo:** la entrega necesita un recorrido reproducible que siempre comience
+con los mismos datos. Las ediciones se mantienen durante la sesión y una recarga
+restaura el perfil original, evitando depender del estado previo del navegador.
 
 ## 3. Cliente de IA separado en el servidor
 

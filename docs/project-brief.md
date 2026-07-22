@@ -38,7 +38,7 @@ coherentes entre sí.
 
 ## Alcance del MVP (esta etapa)
 
-- Creación y persistencia local del evento.
+- Usuario demo hardcodeado y edición temporal del evento durante la sesión.
 - Dashboard con métricas del evento.
 - Presupuesto de referencia con gráfico.
 - Catálogo de proveedores ficticios con filtros.
@@ -58,14 +58,14 @@ coherentes entre sí.
 
 ## Limitaciones actuales
 
-- Sin autenticación ni base de datos en la nube (solo `localStorage`).
+- Sin autenticación ni base de datos: al recargar se restaura el usuario demo.
 - Proveedores y métricas de gasto son ficticios (demo).
 - La IA todavía no está conectada; no se genera ningún resultado real.
 - La edición del evento reinicia el formulario (sin precarga de datos aún).
 
 ## Supuestos iniciales
 
-- La usuaria organiza una única fiesta activa por navegador.
+- La beta se evalúa con una única usuaria fija y una fiesta activa por sesión.
 - El presupuesto se maneja en UYU o USD.
 - La cantidad de invitados razonable está entre 20 y 500.
 - La fecha de la fiesta es futura al momento de crear el evento.
