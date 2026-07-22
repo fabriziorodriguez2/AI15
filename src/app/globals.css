@@ -3,16 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --color-rosa: #ff6b91;
-  --color-rosa-claro: #f8e1ec;
-  --color-rosa-fondo: #fff6f9;
-  --color-dorado: #d4af37;
-  --color-ciruela: #6b486b;
-  --color-texto: #333333;
+  --color-rosa: #cd5782;
+  --color-rosa-claro: #f0eef3;
+  --color-rosa-fondo: #faf8fa;
+  --color-dorado: #cdaf6b;
+  --color-mist: #c7dad8;
+  --color-ciruela: #2f3332;
+  --color-texto: #2f3332;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes onboarding-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-onboarding-in {
+  animation: onboarding-in 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-onboarding-in {
+    animation: none;
+  }
 }
 
 body {

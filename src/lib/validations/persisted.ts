@@ -30,6 +30,7 @@ export const eventProfileSchema = z.object({
   ),
   themeDescription: z.string().default(""),
   favoriteColors: z.array(z.string()).default([]),
+  profilePhoto: z.string().optional(),
   createdAt: iso,
   updatedAt: iso,
 });
@@ -123,6 +124,14 @@ export const selectedProviderSchema = z.object({
   createdAt: iso,
 });
 
+export const guestSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  name: z.string(),
+  confirmed: z.boolean().default(false),
+  createdAt: iso,
+});
+
 // El plan se guarda con contenido ya validado; aquí lo aceptamos de forma
 // tolerante (el detalle se valida al generarlo desde la IA).
 export const aiPlanStoredSchema = z.object({
@@ -145,6 +154,7 @@ export const persistedStateSchema = z.object({
   inspirations: z.array(inspirationSchema).catch([]),
   providers: z.array(providerSchema).catch([]),
   selectedProviders: z.array(selectedProviderSchema).catch([]),
+  guests: z.array(guestSchema).catch([]),
   aiPlan: aiPlanStoredSchema.nullable().catch(null),
 });
 

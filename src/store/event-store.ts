@@ -10,6 +10,7 @@ import type {
   EventDecision,
   EventProfile,
   Expense,
+  Guest,
   Inspiration,
   PlanningTask,
   Provider,
@@ -31,6 +32,7 @@ interface Collections {
   event: EventProfile | null;
   expenses: Expense[];
   tasks: PlanningTask[];
+  guests: Guest[];
   decisions: EventDecision[];
   inspirations: Inspiration[];
   providers: Provider[];
@@ -45,6 +47,11 @@ interface EventActions {
   clearEvent: () => void;
   /** Carga un evento de demostración y siembra el cronograma base. */
   loadDemoEvent: () => void;
+  setProfilePhoto: (dataUrl?: string) => void;
+
+  addGuest: (name: string) => void;
+  toggleGuest: (id: string) => void;
+  deleteGuest: (id: string) => void;
 
   addExpense: (input: ExpenseFormInput) => void;
   updateExpense: (id: string, input: ExpenseFormInput) => void;
@@ -113,6 +120,7 @@ const EMPTY: Collections = {
   event: null,
   expenses: [],
   tasks: [],
+  guests: [],
   decisions: [],
   inspirations: [],
   providers: [],
@@ -212,11 +220,75 @@ export const useEventStore = create<EventState>()(
           favoriteColors: input.favoriteColors ?? [],
           updatedAt: now(),
         };
-        const next = { ...get(), event };
-        set({ event, ...withOutdatedFlags(next) });
+        const templateDates = new Map(
+          buildSeedTasks(current.id, input.eventDate).map((task) => [
+            task.title,
+            task.dueDate,
+          ]),
+        );
+        const tasks = get().tasks.map((task) => {
+          const recalculatedDate = templateDates.get(task.title);
+          return recalculatedDate
+            ? { ...task, dueDate: recalculatedDate, updatedAt: now() }
+            : task;
+        });
+        const next = { ...get(), event, tasks };
+        set({ event, tasks, ...withOutdatedFlags(next) });
       },
 
       clearEvent: () => set({ ...EMPTY }),
+
+      setProfilePhoto: (dataUrl) => {
+        const event = get().event;
+        if (!event) return;
+        set({ event: { ...event, profilePhoto: dataUrl, updatedAt: now() } });
+      },
+
+      addGuest: (name) => {
+        const event = get().event;
+        const cleanName = name.trim();
+        if (!event || !cleanName) return;
+        const guest: Guest = {
+          id: generateId("guest"),
+          eventId: event.id,
+          name: cleanName,
+          confirmed: false,
+          createdAt: now(),
+        };
+        set({ guests: [...get().guests, guest] });
+      },
+
+      toggleGuest: (id) => {
+        const guests = get().guests.map((guest) =>
+          guest.id === id ? { ...guest, confirmed: !guest.confirmed } : guest,
+        );
+        const event = get().event;
+        set({
+          guests,
+          event: event
+            ? {
+                ...event,
+                confirmedGuestCount: guests.filter((guest) => guest.confirmed).length,
+                updatedAt: now(),
+              }
+            : event,
+        });
+      },
+
+      deleteGuest: (id) => {
+        const guests = get().guests.filter((guest) => guest.id !== id);
+        const event = get().event;
+        set({
+          guests,
+          event: event
+            ? {
+                ...event,
+                confirmedGuestCount: guests.filter((guest) => guest.confirmed).length,
+                updatedAt: now(),
+              }
+            : event,
+        });
+      },
 
       loadDemoEvent: () => {
         const event = buildDemoEvent();
@@ -575,6 +647,7 @@ export const useEventStore = create<EventState>()(
         event: state.event,
         expenses: state.expenses,
         tasks: state.tasks,
+        guests: state.guests,
         decisions: state.decisions,
         inspirations: state.inspirations,
         providers: state.providers,

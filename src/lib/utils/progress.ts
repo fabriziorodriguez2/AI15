@@ -59,13 +59,6 @@ export function calculatePlanningProgress(
     tasks.length > 0 ? countCompleted(tasks) / tasks.length : 0;
 
   const items: ProgressItem[] = [
-    boolItem("event", "Evento creado", !!event, 1),
-    boolItem(
-      "budget",
-      "Presupuesto definido",
-      !!event && event.totalBudget > 0,
-      1,
-    ),
     boolItem("expenses", "Gastos registrados", expenses.length > 0, 1),
     boolItem("plan", "Plan generado", !!aiPlan && !aiPlan.isOutdated, 2),
     boolItem("salon", "Salón decidido", hasDecision(["salon"]), 1),

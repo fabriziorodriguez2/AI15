@@ -25,7 +25,7 @@ import {
   type TaskStatus,
 } from "@/types";
 import { sortTasksByDate, isTaskOverdue } from "@/lib/utils/tasks";
-import { parseEventDate, formatShortDate } from "@/lib/utils/date";
+import { groupTasksByPeriod } from "@/lib/utils/timeline";
 import { cn } from "@/lib/utils/cn";
 
 type Filter = "todas" | TaskStatus | "vencidas";
@@ -59,6 +59,10 @@ export default function CronogramaPage() {
     if (filter === "vencidas") return sorted.filter(isTaskOverdue);
     return sorted.filter((t) => t.status === filter);
   }, [sorted, filter]);
+  const grouped = useMemo(
+    () => groupTasksByPeriod(filtered, event?.eventDate ?? ""),
+    [filtered, event?.eventDate],
+  );
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
 
@@ -73,7 +77,6 @@ export default function CronogramaPage() {
     );
   }
 
-  const eventDate = parseEventDate(event.eventDate);
   const openNew = () => {
     setEditing(null);
     setFormOpen(true);
@@ -83,11 +86,7 @@ export default function CronogramaPage() {
     <div>
       <PageHeader
         title="Cronograma"
-        subtitle={
-          eventDate
-            ? `Tu fiesta es el ${formatShortDate(eventDate)}.`
-            : "Organizá tus tareas."
-        }
+        subtitle="Tus tareas, agrupadas según cuánto falta para la fiesta."
         action={
           <button onClick={openNew} className="btn-primary px-4 py-2 text-xs">
             <Plus size={15} aria-hidden="true" />
@@ -137,10 +136,18 @@ export default function CronogramaPage() {
           No hay tareas en este filtro.
         </div>
       ) : (
-        <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
-          {filtered.map((task) => {
+        <div className="space-y-6">
+          {grouped.map((group) => (
+            <section key={group.label}>
+              <div className="mb-2 flex items-center gap-3">
+                <h2 className="font-display text-lg font-bold text-ciruela">
+                  {group.label}
+                </h2>
+                <span className="h-px flex-1 bg-[#eadfe5]" />
+              </div>
+              <ul className="divide-y divide-[#eadfe5] rounded-2xl border border-[#eadfe5] bg-white px-4 shadow-card">
+          {group.tasks.map((task) => {
             const overdue = isTaskOverdue(task);
-            const due = parseEventDate(task.dueDate);
             return (
               <li
                 key={task.id}
@@ -210,15 +217,11 @@ export default function CronogramaPage() {
                     )}
 
                     <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
-                      <span
-                        className={cn(
-                          "font-medium",
-                          overdue ? "text-[#c0392b]" : "text-texto/50",
-                        )}
-                      >
-                        {due ? formatShortDate(due) : task.dueDate}
-                        {overdue && " · vencida"}
-                      </span>
+                      {overdue && (
+                        <span className="font-medium text-[#c0392b]">
+                          Vencida
+                        </span>
+                      )}
                       <span className="text-texto/40">
                         {TASK_CATEGORY_LABELS[task.category]}
                       </span>
@@ -273,7 +276,10 @@ export default function CronogramaPage() {
               </li>
             );
           })}
-        </ul>
+              </ul>
+            </section>
+          ))}
+        </div>
       )}
 
       <Modal

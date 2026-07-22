@@ -6,13 +6,14 @@ const config: Config = {
     extend: {
       colors: {
         rosa: {
-          DEFAULT: "#FF6B91",
-          claro: "#F8E1EC",
-          fondo: "#FFF6F9",
+          DEFAULT: "#CD5782",
+          claro: "#F0EEF3",
+          fondo: "#FAF8FA",
         },
-        dorado: "#D4AF37",
-        ciruela: "#6B486B",
-        texto: "#333333",
+        dorado: "#CDAF6B",
+        mist: "#C7DAD8",
+        ciruela: "#2F3332",
+        texto: "#2F3332",
       },
       fontFamily: {
         sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],

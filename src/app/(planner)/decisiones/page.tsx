@@ -40,6 +40,12 @@ export default function DecisionesPage() {
     setEditing(null);
     setFormOpen(true);
   };
+  const groupedDecisions = Object.entries(
+    decisions.reduce<Record<string, EventDecision[]>>((groups, decision) => {
+      (groups[decision.category] ??= []).push(decision);
+      return groups;
+    }, {}),
+  );
 
   return (
     <div>
@@ -66,15 +72,20 @@ export default function DecisionesPage() {
           </button>
         </div>
       ) : (
-        <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
-          {decisions.map((decision) => (
+        <div className="space-y-6">
+          {groupedDecisions.map(([category, categoryDecisions]) => (
+            <section key={category}>
+              <h2 className="mb-2 font-display text-xl font-bold text-ciruela">
+                {DECISION_CATEGORY_LABELS[
+                  category as keyof typeof DECISION_CATEGORY_LABELS
+                ]}
+              </h2>
+              <ul className="divide-y divide-[#eadfe5] rounded-2xl border border-[#eadfe5] bg-white px-4 shadow-card">
+          {categoryDecisions.map((decision) => (
             <li key={decision.id} className="py-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="chip">
-                      {DECISION_CATEGORY_LABELS[decision.category]}
-                    </span>
                     {decision.confirmed && (
                       <span className="inline-flex items-center gap-1 rounded-md bg-dorado/10 px-2 py-0.5 text-[10px] font-semibold text-[#8f7420]">
                         <Lock size={10} aria-hidden="true" />
@@ -114,7 +125,10 @@ export default function DecisionesPage() {
               </div>
             </li>
           ))}
-        </ul>
+              </ul>
+            </section>
+          ))}
+        </div>
       )}
 
       <Modal

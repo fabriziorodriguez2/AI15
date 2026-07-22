@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   CalendarDays,
@@ -8,9 +9,11 @@ import {
   PiggyBank,
   Wallet2,
   Store,
-  Images,
   CalendarClock,
   Check,
+  Camera,
+  Trash2,
+  UsersRound,
 } from "lucide-react";
 import { useEventStore } from "@/store/event-store";
 import { useStoreReady } from "@/store/use-hydrated-event";
@@ -28,7 +31,7 @@ import { cn } from "@/lib/utils/cn";
 const QUICK_LINKS = [
   { href: "/presupuesto", label: "Presupuesto", icon: Wallet2 },
   { href: "/proveedores", label: "Proveedores", icon: Store },
-  { href: "/inspiracion", label: "Inspiración", icon: Images },
+  { href: "/invitados", label: "Invitados", icon: UsersRound },
   { href: "/cronograma", label: "Cronograma", icon: CalendarClock },
 ];
 
@@ -41,6 +44,9 @@ export default function DashboardPage() {
   const inspirations = useEventStore((s) => s.inspirations);
   const selectedProviders = useEventStore((s) => s.selectedProviders);
   const aiPlan = useEventStore((s) => s.aiPlan);
+  const setProfilePhoto = useEventStore((s) => s.setProfilePhoto);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [photoError, setPhotoError] = useState("");
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
 
@@ -83,6 +89,78 @@ export default function DashboardPage() {
               : "Tu fecha ya pasó. Podés editarla desde Cuenta."}
         </p>
       </div>
+
+      <section className="flex items-center gap-4 rounded-2xl bg-[#dcd3aa]/45 p-4">
+        <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm">
+          {event.profilePhoto ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={event.profilePhoto}
+              alt={`Foto de ${event.honoreeName}`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="font-display text-3xl font-bold text-rosa">
+              {event.honoreeName.trim().charAt(0).toUpperCase()}
+            </span>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-lg font-bold text-ciruela">
+            Tu espacio
+          </h2>
+          <p className="mt-0.5 text-xs leading-relaxed text-texto/65">
+            Sumá una foto tuya para hacer este panel más personal.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => photoInputRef.current?.click()}
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-white px-3 text-xs font-semibold text-ciruela shadow-sm"
+            >
+              <Camera size={15} aria-hidden="true" />
+              {event.profilePhoto ? "Cambiar foto" : "Subir foto"}
+            </button>
+            {event.profilePhoto && (
+              <button
+                type="button"
+                onClick={() => setProfilePhoto(undefined)}
+                aria-label="Quitar foto"
+                className="grid size-10 place-items-center rounded-xl bg-white text-texto/55 shadow-sm"
+              >
+                <Trash2 size={15} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(eventInput) => {
+              const file = eventInput.target.files?.[0];
+              if (!file) return;
+              if (file.size > 1_500_000) {
+                setPhotoError("Elegí una imagen de hasta 1,5 MB.");
+                eventInput.target.value = "";
+                return;
+              }
+              const reader = new FileReader();
+              reader.onload = () => {
+                setProfilePhoto(String(reader.result));
+                setPhotoError("");
+              };
+              reader.readAsDataURL(file);
+              eventInput.target.value = "";
+            }}
+          />
+          {photoError && (
+            <p className="mt-2 text-[11px] font-medium text-[#a9344f]">
+              {photoError}
+            </p>
+          )}
+        </div>
+      </section>
 
       {/* Progreso */}
       <div className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">

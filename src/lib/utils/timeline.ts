@@ -17,6 +17,11 @@ export interface ComputedTask {
   isPast: boolean;
 }
 
+export interface PlanningTaskGroup {
+  label: string;
+  tasks: PlanningTask[];
+}
+
 /** Calcula la fecha concreta de una tarea a partir de la fecha del evento. */
 function computeTaskDate(
   eventDate: Date,
@@ -70,4 +75,39 @@ export function buildSeedTasks(
     status: "pending" as const,
     source: "user" as const,
   }));
+}
+
+/** Agrupa tareas por el momento relativo a la fiesta, sin mostrar fechas fijas. */
+export function groupTasksByPeriod(
+  tasks: PlanningTask[],
+  eventDateIso: string,
+): PlanningTaskGroup[] {
+  const eventDate = parseEventDate(eventDateIso);
+  if (!eventDate) return [{ label: "Tareas", tasks }];
+
+  const groups = new Map<string, PlanningTask[]>();
+  for (const task of tasks) {
+    const dueDate = parseEventDate(task.dueDate);
+    const daysBefore = dueDate
+      ? Math.ceil((eventDate.getTime() - dueDate.getTime()) / 86_400_000)
+      : 0;
+    const label = getPeriodLabel(daysBefore);
+    groups.set(label, [...(groups.get(label) ?? []), task]);
+  }
+
+  return Array.from(groups, ([label, groupedTasks]) => ({
+    label,
+    tasks: groupedTasks,
+  }));
+}
+
+function getPeriodLabel(daysBefore: number): string {
+  if (daysBefore > 315) return "12 meses antes";
+  if (daysBefore > 255) return "9–10 meses antes";
+  if (daysBefore > 135) return "6–8 meses antes";
+  if (daysBefore > 75) return "3–4 meses antes";
+  if (daysBefore > 45) return "2 meses antes";
+  if (daysBefore > 14) return "1 mes antes";
+  if (daysBefore > 1) return "1–2 semanas antes";
+  return "Día de la fiesta";
 }

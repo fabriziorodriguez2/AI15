@@ -24,6 +24,8 @@ export interface EventProfile {
   styles: PartyStyle[];
   themeDescription: string;
   favoriteColors: string[];
+  /** Foto opcional guardada localmente para personalizar el inicio. */
+  profilePhoto?: string;
   createdAt: string;
   updatedAt: string;
 }

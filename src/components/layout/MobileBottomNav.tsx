@@ -13,6 +13,7 @@ import {
   UserRound,
   Sparkles,
   ListChecks,
+  UsersRound,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -34,6 +35,7 @@ const PRIMARY: NavLink[] = [
 
 // Rutas secundarias que aparecen en la hoja "Más".
 const SECONDARY: NavLink[] = [
+  { href: "/invitados", label: "Invitados", icon: UsersRound },
   { href: "/proveedores", label: "Proveedores", icon: Store },
   { href: "/inspiracion", label: "Inspiración", icon: Images },
   { href: "/decisiones", label: "Decisiones", icon: ListChecks },
