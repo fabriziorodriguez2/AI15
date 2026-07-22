@@ -19,7 +19,7 @@ más adelante. **Incluye:**
 - Usuario demo hardcodeado y estado temporal de sesión con Zustand.
 - Dashboard con datos reales del evento y métricas de demostración.
 - Presupuesto con distribución de referencia y gráfico circular (CSS puro).
-- Catálogo de proveedores ficticios con filtros y búsqueda.
+- Catálogo de proveedores ficticios hardcodeados con filtros y búsqueda.
 - Pantalla de inspiración con carga y previsualización local de imágenes.
 - Cronograma con fechas calculadas a partir de la fecha de la fiesta.
 - Pantalla de cuenta con identificación del usuario demo y restauración.

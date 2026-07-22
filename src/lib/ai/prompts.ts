@@ -96,6 +96,49 @@ export function buildPlanPrompt(ctx: AIContext, today: string): string {
   ].join("\n");
 }
 
+export function buildPlanLogisticsPrompt(
+  ctx: AIContext,
+  today: string,
+): string {
+  return [
+    "### INSTRUCCIONES",
+    SYSTEM_RULES,
+    "",
+    "### CONTEXTO Y DATOS DEL EVENTO",
+    formatContext(ctx, today),
+    "",
+    "### TAREA",
+    "Generá una versión MUY CONCISA de la parte logística del plan.",
+    "Incluí exactamente 4 categorías de presupuesto, con justificaciones de máximo 8 palabras y porcentajes que sumen 100.",
+    "Incluí exactamente 3 próximas tareas prioritarias. Título de máximo 6 palabras, descripción de máximo 8 palabras y fecha YYYY-MM-DD.",
+    "No agregues introducciones ni campos no solicitados.",
+    "",
+    "### FORMATO DE SALIDA",
+    "Respondé solo con el JSON del esquema provisto.",
+  ].join("\n");
+}
+
+export function buildPlanCreativePrompt(
+  ctx: AIContext,
+  today: string,
+): string {
+  return [
+    "### INSTRUCCIONES",
+    SYSTEM_RULES,
+    "",
+    "### CONTEXTO Y DATOS DEL EVENTO",
+    formatContext(ctx, today),
+    "",
+    "### TAREA",
+    "Generá una versión MUY CONCISA del resumen y la propuesta estética.",
+    "El resumen debe tener máximo 30 palabras. Cada campo de estilo debe tener máximo 8 palabras. Incluí 3 colores, exactamente 2 recomendaciones breves y como máximo una advertencia breve.",
+    "No incluyas presupuesto ni cronograma. No agregues campos no solicitados.",
+    "",
+    "### FORMATO DE SALIDA",
+    "Respondé solo con el JSON del esquema provisto.",
+  ].join("\n");
+}
+
 export function buildBudgetPrompt(ctx: AIContext, today: string): string {
   return [
     "### INSTRUCCIONES",
@@ -105,7 +148,7 @@ export function buildBudgetPrompt(ctx: AIContext, today: string): string {
     formatContext(ctx, today),
     "",
     "### TAREA",
-    "Proponé una distribución del presupuesto adaptada a esta fiesta. Para cada categoría relevante (por ejemplo salón, catering, vestido, decoración, música, foto y video, otros) indicá un porcentaje y una justificación breve. Los porcentajes deben sumar exactamente 100. No calcules importes en dinero: solo porcentajes y justificación.",
+    "Proponé una distribución del presupuesto adaptada a esta fiesta. Incluí entre 4 y 5 categorías, con una justificación de máximo 8 palabras para cada una. Los porcentajes deben sumar exactamente 100. No calcules importes en dinero.",
     "",
     "### FORMATO DE SALIDA",
     "Respondé únicamente con el JSON { allocations: [...] } que cumple el esquema. Sin texto adicional.",

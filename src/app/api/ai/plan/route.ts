@@ -1,8 +1,17 @@
 import { NextResponse } from "next/server";
-import { generateStructured } from "@/lib/ai/gemini-proxy";
+import {
+  generateStructured,
+  type StructuredResult,
+} from "@/lib/ai/gemini-proxy";
 import { aiContextSchema } from "@/lib/ai/context-schema";
-import { buildPlanPrompt } from "@/lib/ai/prompts";
-import { planResponseSchema } from "@/lib/ai/response-schemas";
+import {
+  buildPlanCreativePrompt,
+  buildPlanLogisticsPrompt,
+} from "@/lib/ai/prompts";
+import {
+  planCreativeResponseSchema,
+  planLogisticsResponseSchema,
+} from "@/lib/ai/response-schemas";
 import { aiPlanContentSchema } from "@/lib/validations/ai-plan";
 import { finalizeAllocation } from "@/lib/ai/finalize-allocation";
 import { toISODate } from "@/lib/utils/date";
@@ -12,6 +21,22 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MODEL = "gemini-2.5-flash";
+
+function generationFailure(
+  result: Extract<StructuredResult<unknown>, { ok: false }>,
+  part: "logistics" | "creative",
+) {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: result.error,
+      ...(process.env.NODE_ENV === "development"
+        ? { debug: { stage: "generation", part, code: result.code } }
+        : {}),
+    },
+    { status: 502 },
+  );
+}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -40,23 +65,46 @@ export async function POST(request: Request) {
     );
   }
 
-  const prompt = buildPlanPrompt(ctx, toISODate(new Date()));
-  const result = await generateStructured(prompt, planResponseSchema, {
-    model: MODEL,
-    temperature: 0.6,
+  const today = toISODate(new Date());
+  const [logisticsResult, creativeResult] = await Promise.all([
+    generateStructured(
+      buildPlanLogisticsPrompt(ctx, today),
+      planLogisticsResponseSchema,
+      { model: MODEL, temperature: 0.4 },
+    ),
+    generateStructured(
+      buildPlanCreativePrompt(ctx, today),
+      planCreativeResponseSchema,
+      { model: MODEL, temperature: 0.6 },
+    ),
+  ]);
+
+  if (!logisticsResult.ok)
+    return generationFailure(logisticsResult, "logistics");
+  if (!creativeResult.ok)
+    return generationFailure(creativeResult, "creative");
+
+  const parsedContent = aiPlanContentSchema.safeParse({
+    ...(creativeResult.data as object),
+    ...(logisticsResult.data as object),
   });
-
-  if (!result.ok) {
-    return NextResponse.json(
-      { ok: false, error: result.error },
-      { status: 502 },
-    );
-  }
-
-  const parsedContent = aiPlanContentSchema.safeParse(result.data);
   if (!parsedContent.success) {
     return NextResponse.json(
-      { ok: false, error: "La respuesta no tuvo el formato esperado." },
+      {
+        ok: false,
+        error: "La respuesta no tuvo el formato esperado.",
+        ...(process.env.NODE_ENV === "development"
+          ? {
+              debug: {
+                stage: "validation",
+                issues: parsedContent.error.issues.map((issue) => ({
+                  path: issue.path.join("."),
+                  message: issue.message,
+                })),
+              },
+            }
+          : {}),
+      },
       { status: 502 },
     );
   }
@@ -76,7 +124,14 @@ export async function POST(request: Request) {
     ok: true,
     content: parsedContent.data,
     budgetAllocation: allocation.allocations,
-    model: result.model,
-    usage: result.usage ?? null,
+    model: creativeResult.model,
+    usage: {
+      chargedUsd:
+        (creativeResult.usage?.chargedUsd ?? 0) +
+        (logisticsResult.usage?.chargedUsd ?? 0),
+      balanceUsd:
+        creativeResult.usage?.balanceUsd ??
+        logisticsResult.usage?.balanceUsd,
+    },
   });
 }

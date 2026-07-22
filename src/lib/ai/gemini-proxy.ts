@@ -149,7 +149,44 @@ export async function generateText(
 
 export type StructuredResult<T> =
   | { ok: true; data: T; usage?: GeminiUsage; model: string; raw: string }
-  | { ok: false; error: string; code: GeminiErrorCode | "invalid_json" };
+  | {
+      ok: false;
+      error: string;
+      code: GeminiErrorCode | "invalid_json";
+    };
+
+/**
+ * Gemini puede envolver un JSON válido en fences Markdown aunque se solicite
+ * responseMimeType application/json. Probamos variantes seguras sin alterar
+ * los datos ni intentar "inventar" campos faltantes.
+ */
+function parseStructuredJson(text: string): unknown {
+  const trimmed = text.trim();
+  const withoutFence = trimmed
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+  const firstBrace = withoutFence.indexOf("{");
+  const lastBrace = withoutFence.lastIndexOf("}");
+  const objectSlice =
+    firstBrace >= 0 && lastBrace > firstBrace
+      ? withoutFence.slice(firstBrace, lastBrace + 1)
+      : withoutFence;
+
+  const candidates = Array.from(
+    new Set([trimmed, withoutFence, objectSlice].filter(Boolean)),
+  );
+  for (const candidate of candidates) {
+    try {
+      const parsed: unknown = JSON.parse(candidate);
+      if (typeof parsed === "string") return JSON.parse(parsed);
+      return parsed;
+    } catch {
+      // Probar la siguiente variante.
+    }
+  }
+  throw new Error("invalid_json");
+}
 
 /**
  * Genera una respuesta estructurada (JSON) usando responseSchema y la parsea.
@@ -166,16 +203,20 @@ export async function generateStructured(
     timeoutMs: options?.timeoutMs,
     generationConfig: {
       temperature: options?.temperature ?? 0.6,
-      maxOutputTokens: 4096,
+      maxOutputTokens: 8192,
       responseMimeType: "application/json",
       responseSchema,
+      // El plan necesita el presupuesto de salida para el JSON completo. En
+      // Gemini 2.5, el thinking interno también consume ese límite y puede
+      // cortar la respuesta a mitad de un objeto.
+      thinkingConfig: { thinkingBudget: 0 },
     },
   });
 
   if (!result.ok) return { ok: false, error: result.error, code: result.code };
 
   try {
-    const data: unknown = JSON.parse(result.text);
+    const data = parseStructuredJson(result.text);
     return {
       ok: true,
       data,

@@ -41,7 +41,7 @@ coherentes entre sí.
 - Usuario demo hardcodeado y edición temporal del evento durante la sesión.
 - Dashboard con métricas del evento.
 - Presupuesto de referencia con gráfico.
-- Catálogo de proveedores ficticios con filtros.
+- Catálogo de proveedores ficticios hardcodeados con filtros.
 - Inspiración con previsualización local de imagen.
 - Cronograma calculado desde la fecha.
 - Infraestructura de IA lista, sin llamadas reales.
