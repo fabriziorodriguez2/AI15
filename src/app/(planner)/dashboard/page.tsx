@@ -91,7 +91,7 @@ export default function DashboardPage() {
       </div>
 
       <section className="flex items-center gap-4 rounded-2xl bg-[#dcd3aa]/45 p-4">
-        <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm">
+        <div className="grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm">
           {event.profilePhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -100,7 +100,7 @@ export default function DashboardPage() {
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="font-display text-3xl font-bold text-rosa">
+            <span className="font-display text-4xl font-bold text-rosa">
               {event.honoreeName.trim().charAt(0).toUpperCase()}
             </span>
           )}
