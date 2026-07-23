@@ -16,6 +16,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Oculta las barras sin desactivar el scroll táctil, con rueda o teclado. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes onboarding-in {
   from {
     opacity: 0;
