@@ -132,21 +132,13 @@ export default function InspiracionPage() {
   };
 
   return (
-    <div className="relative -mx-4 -my-5 min-h-[calc(100%+2.5rem)] overflow-hidden bg-gradient-to-b from-white via-[#f3fffd] to-[#fffaf0] px-4 py-5">
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <span className="absolute -right-20 top-10 size-56 rounded-full bg-[#48d8cf]/25 blur-3xl" />
-        <span className="absolute -left-24 top-[34rem] size-64 rounded-full bg-dorado/20 blur-3xl" />
-        <span className="absolute -right-28 top-[65rem] size-72 rounded-full bg-[#62ddd6]/20 blur-3xl" />
-        <span className="absolute left-10 top-[92rem] size-52 rounded-full bg-[#e0bd52]/15 blur-3xl" />
-      </div>
+    <div>
+      <PageHeader
+        title="Inspiración"
+        subtitle="Subí una imagen y describí qué te gusta."
+      />
 
-      <div className="relative z-10">
-        <PageHeader
-          title="Inspiración"
-          subtitle="Subí una imagen y describí qué te gusta."
-        />
-
-        <div className="space-y-5">
+      <div className="space-y-5">
         <FileUpload
           onFileReady={handleFileReady}
           resetKey={uploadResetKey}
@@ -349,7 +341,6 @@ export default function InspiracionPage() {
             </ul>
           </div>
         )}
-        </div>
       </div>
 
       <Modal
