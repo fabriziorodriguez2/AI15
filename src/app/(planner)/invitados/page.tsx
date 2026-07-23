@@ -6,7 +6,9 @@ import { useEventStore } from "@/store/event-store";
 import { useStoreReady } from "@/store/use-hydrated-event";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { cn } from "@/lib/utils/cn";
+import type { Guest } from "@/types";
 
 export default function InvitadosPage() {
   const ready = useStoreReady();
@@ -17,6 +19,7 @@ export default function InvitadosPage() {
   const deleteGuest = useEventStore((state) => state.deleteGuest);
   const [name, setName] = useState("");
   const [query, setQuery] = useState("");
+  const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
 
   const filteredGuests = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("es");
@@ -148,7 +151,7 @@ export default function InvitadosPage() {
               </span>
               <button
                 type="button"
-                onClick={() => deleteGuest(guest.id)}
+                onClick={() => setGuestToDelete(guest)}
                 aria-label={`Eliminar a ${guest.name}`}
                 className="grid size-11 place-items-center rounded-xl text-texto/35 hover:bg-[#c0392b]/5 hover:text-[#c0392b]"
               >
@@ -158,6 +161,23 @@ export default function InvitadosPage() {
           ))}
         </ul>
       )}
+
+      <ConfirmDialog
+        open={!!guestToDelete}
+        title="¿Eliminar invitado?"
+        description={
+          guestToDelete
+            ? `¿Querés eliminar a ${guestToDelete.name} de la lista?`
+            : ""
+        }
+        confirmLabel="Aceptar"
+        cancelLabel="Cancelar"
+        onCancel={() => setGuestToDelete(null)}
+        onConfirm={() => {
+          if (guestToDelete) deleteGuest(guestToDelete.id);
+          setGuestToDelete(null);
+        }}
+      />
     </div>
   );
 }
