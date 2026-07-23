@@ -123,13 +123,12 @@ export function CreateEventForm() {
   };
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-    // Enter en un input no puede guardar ni navegar antes del último paso.
+    // Nunca guardamos mediante el submit implícito del navegador. Esto evita
+    // que el mismo clic que abre el paso 3 se reutilice sobre el botón final.
+    event.preventDefault();
     if (step < STEPS.length - 1) {
-      event.preventDefault();
       void goNext();
-      return;
     }
-    void handleSubmit(onSubmit)(event);
   };
 
   return (
@@ -461,6 +460,7 @@ export function CreateEventForm() {
 
           {step < STEPS.length - 1 ? (
             <button
+              key="continue-event"
               type="button"
               onClick={goNext}
               disabled={isAdvancing}
@@ -471,7 +471,9 @@ export function CreateEventForm() {
             </button>
           ) : (
             <button
-              type="submit"
+              key="save-event"
+              type="button"
+              onClick={() => void handleSubmit(onSubmit)()}
               className="btn-primary"
               disabled={isSubmitting}
             >
