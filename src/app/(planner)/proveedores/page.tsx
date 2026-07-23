@@ -39,8 +39,14 @@ function matchesPrice(priceTo: number, filter: PriceFilter): boolean {
   return priceTo > 80000;
 }
 
+// La demo muestra un ejemplo por categoría para que el catálogo sea breve.
+const DEMO_PROVIDERS = MOCK_PROVIDERS.filter(
+  (provider, index, all) =>
+    all.findIndex((item) => item.category === provider.category) === index,
+);
+
 const DEMO_DEPARTMENTS = Array.from(
-  new Set(MOCK_PROVIDERS.map((p) => p.department)),
+  new Set(DEMO_PROVIDERS.map((p) => p.department)),
 ).sort();
 
 export default function ProveedoresPage() {
@@ -60,6 +66,11 @@ export default function ProveedoresPage() {
   const [editing, setEditing] = useState<Provider | null>(null);
   const [toDelete, setToDelete] = useState<Provider | null>(null);
 
+  const [myQuery, setMyQuery] = useState("");
+  const [myCategory, setMyCategory] = useState<ProviderCategory | "todas">(
+    "todas",
+  );
+
   // Filtros del catálogo demo.
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ProviderCategory | "todas">("todas");
@@ -72,8 +83,24 @@ export default function ProveedoresPage() {
     return map;
   }, [selectedProviders]);
 
+  const myFiltered = useMemo(() => {
+    const normalizedQuery = myQuery.trim().toLocaleLowerCase("es");
+    return providers
+      .filter((provider) => {
+        const matchesName = provider.name
+          .toLocaleLowerCase("es")
+          .includes(normalizedQuery);
+        const matchesCategory =
+          myCategory === "todas" || provider.category === myCategory;
+        return matchesName && matchesCategory;
+      })
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, "es", { sensitivity: "base" }),
+      );
+  }, [providers, myCategory, myQuery]);
+
   const demoFiltered = useMemo(() => {
-    return MOCK_PROVIDERS.filter((p) => {
+    return DEMO_PROVIDERS.filter((p) => {
       if (category !== "todas" && p.category !== category) return false;
       if (department !== "todos" && p.department !== department) return false;
       if (!matchesPrice(p.priceTo, price)) return false;
@@ -83,7 +110,9 @@ export default function ProveedoresPage() {
       )
         return false;
       return true;
-    });
+    }).sort((a, b) =>
+      a.name.localeCompare(b.name, "es", { sensitivity: "base" }),
+    );
   }, [category, department, price, query]);
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
@@ -156,8 +185,49 @@ export default function ProveedoresPage() {
             </button>
           </div>
         ) : (
+          <>
+            <div className="card mb-4 grid grid-cols-1 gap-3">
+              <div className="relative">
+                <Search
+                  size={16}
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-texto/40"
+                  aria-hidden="true"
+                />
+                <input
+                  type="search"
+                  value={myQuery}
+                  onChange={(e) => setMyQuery(e.target.value)}
+                  placeholder="Buscar por nombre"
+                  aria-label="Buscar proveedor por nombre"
+                  className="field-input pl-9"
+                />
+              </div>
+              <select
+                aria-label="Filtrar proveedores por categoría"
+                className="field-input"
+                value={myCategory}
+                onChange={(e) =>
+                  setMyCategory(e.target.value as ProviderCategory | "todas")
+                }
+              >
+                <option value="todas">Todas las categorías</option>
+                {(
+                  Object.keys(PROVIDER_CATEGORY_LABELS) as ProviderCategory[]
+                ).map((cat) => (
+                  <option key={cat} value={cat}>
+                    {PROVIDER_CATEGORY_LABELS[cat]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {myFiltered.length === 0 ? (
+              <div className="card py-8 text-center text-sm text-texto/60">
+                No hay proveedores con esos filtros.
+              </div>
+            ) : (
           <ul className="grid gap-3">
-            {providers.map((provider) => {
+            {myFiltered.map((provider) => {
               const selected = selectedByProviderId.get(provider.id);
               return (
                 <li key={provider.id} className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">
@@ -259,6 +329,8 @@ export default function ProveedoresPage() {
               );
             })}
           </ul>
+            )}
+          </>
         )
       ) : (
         <div>

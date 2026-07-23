@@ -10,6 +10,7 @@ import {
   CircleDot,
   Sparkles,
   CalendarPlus,
+  Search,
 } from "lucide-react";
 import { useEventStore } from "@/store/event-store";
 import { useStoreReady } from "@/store/use-hydrated-event";
@@ -49,16 +50,33 @@ export default function CronogramaPage() {
   const seedBaseTasks = useEventStore((s) => s.seedBaseTasks);
 
   const [filter, setFilter] = useState<Filter>("todas");
+  const [query, setQuery] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<PlanningTask | null>(null);
   const [toDelete, setToDelete] = useState<PlanningTask | null>(null);
 
   const sorted = useMemo(() => sortTasksByDate(tasks), [tasks]);
   const filtered = useMemo(() => {
-    if (filter === "todas") return sorted;
-    if (filter === "vencidas") return sorted.filter(isTaskOverdue);
-    return sorted.filter((t) => t.status === filter);
-  }, [sorted, filter]);
+    const normalizedQuery = query.trim().toLocaleLowerCase("es");
+    return sorted.filter((task) => {
+      const matchesStatus =
+        filter === "todas"
+          ? true
+          : filter === "vencidas"
+            ? isTaskOverdue(task)
+            : task.status === filter;
+      const matchesQuery =
+        !normalizedQuery ||
+        task.title.toLocaleLowerCase("es").includes(normalizedQuery) ||
+        task.description
+          .toLocaleLowerCase("es")
+          .includes(normalizedQuery) ||
+        TASK_CATEGORY_LABELS[task.category]
+          .toLocaleLowerCase("es")
+          .includes(normalizedQuery);
+      return matchesStatus && matchesQuery;
+    });
+  }, [sorted, filter, query]);
   const grouped = useMemo(
     () => groupTasksByPeriod(filtered, event?.eventDate ?? ""),
     [filtered, event?.eventDate],
@@ -94,6 +112,22 @@ export default function CronogramaPage() {
           </button>
         }
       />
+
+      <div className="relative mb-4">
+        <Search
+          size={17}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-texto/40"
+          aria-hidden="true"
+        />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar tareas"
+          aria-label="Buscar tareas"
+          className="field-input pl-10"
+        />
+      </div>
 
       {/* Filtros */}
       <div className="mb-4 flex flex-wrap gap-2">
@@ -133,7 +167,7 @@ export default function CronogramaPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="surface-section px-5 text-center text-sm text-texto/60">
-          No hay tareas en este filtro.
+          No hay tareas que coincidan con la búsqueda y el filtro.
         </div>
       ) : (
         <div className="space-y-6">

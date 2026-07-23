@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { Check, Trash2, UserPlus, UsersRound } from "lucide-react";
+import { FormEvent, useMemo, useState } from "react";
+import { Check, Search, Trash2, UserPlus, UsersRound } from "lucide-react";
 import { useEventStore } from "@/store/event-store";
 import { useStoreReady } from "@/store/use-hydrated-event";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -16,6 +16,18 @@ export default function InvitadosPage() {
   const toggleGuest = useEventStore((state) => state.toggleGuest);
   const deleteGuest = useEventStore((state) => state.deleteGuest);
   const [name, setName] = useState("");
+  const [query, setQuery] = useState("");
+
+  const filteredGuests = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase("es");
+    return guests
+      .filter((guest) =>
+        guest.name.toLocaleLowerCase("es").includes(normalizedQuery),
+      )
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, "es", { sensitivity: "base" }),
+      );
+  }, [guests, query]);
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
 
@@ -78,15 +90,39 @@ export default function InvitadosPage() {
         </button>
       </form>
 
+      {guests.length > 0 && (
+        <div className="relative mb-4">
+          <Search
+            size={17}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-texto/40"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar por nombre"
+            aria-label="Buscar invitado por nombre"
+            className="field-input pl-10"
+          />
+        </div>
+      )}
+
       {guests.length === 0 ? (
         <div className="surface-section text-center">
           <p className="text-sm text-texto/55">
             Tu lista todavía está vacía. Agregá el primer nombre arriba.
           </p>
         </div>
+      ) : filteredGuests.length === 0 ? (
+        <div className="surface-section text-center">
+          <p className="text-sm text-texto/55">
+            No hay invitados con ese nombre.
+          </p>
+        </div>
       ) : (
         <ul className="divide-y divide-rosa-claro overflow-hidden rounded-2xl border border-rosa-claro bg-white px-4 shadow-card">
-          {guests.map((guest) => (
+          {filteredGuests.map((guest) => (
             <li key={guest.id} className="flex min-h-16 items-center gap-3 py-2">
               <button
                 type="button"

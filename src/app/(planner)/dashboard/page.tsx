@@ -21,6 +21,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { StatCard } from "@/components/ui/StatCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { AIStatusCard } from "@/components/ui/AIStatusCard";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatCurrency } from "@/lib/utils/currency";
 import { daysUntil, formatShortDate, parseEventDate } from "@/lib/utils/date";
 import { computeBudgetTotals } from "@/lib/utils/budget";
@@ -47,6 +48,7 @@ export default function DashboardPage() {
   const setProfilePhoto = useEventStore((s) => s.setProfilePhoto);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState("");
+  const [photoDeleteOpen, setPhotoDeleteOpen] = useState(false);
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
 
@@ -90,8 +92,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <section className="flex items-center gap-4 rounded-2xl bg-[#dcd3aa]/45 p-4">
-        <div className="grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm">
+      <section className="flex items-start gap-4 rounded-2xl bg-[#dcd3aa]/45 p-4">
+        <div className="grid size-32 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm">
           {event.profilePhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -100,7 +102,7 @@ export default function DashboardPage() {
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="font-display text-4xl font-bold text-rosa">
+            <span className="font-display text-5xl font-bold text-rosa">
               {event.honoreeName.trim().charAt(0).toUpperCase()}
             </span>
           )}
@@ -124,7 +126,7 @@ export default function DashboardPage() {
             {event.profilePhoto && (
               <button
                 type="button"
-                onClick={() => setProfilePhoto(undefined)}
+                onClick={() => setPhotoDeleteOpen(true)}
                 aria-label="Quitar foto"
                 className="grid size-10 place-items-center rounded-xl bg-white text-texto/55 shadow-sm"
               >
@@ -161,6 +163,19 @@ export default function DashboardPage() {
           )}
         </div>
       </section>
+
+      <ConfirmDialog
+        open={photoDeleteOpen}
+        title="¿Quitar la foto de perfil?"
+        description="La foto dejará de mostrarse en tu inicio."
+        confirmLabel="Aceptar"
+        cancelLabel="Cancelar"
+        onCancel={() => setPhotoDeleteOpen(false)}
+        onConfirm={() => {
+          setProfilePhoto(undefined);
+          setPhotoDeleteOpen(false);
+        }}
+      />
 
       {/* Progreso */}
       <div className="rounded-xl border border-[#eadfe5] bg-white p-5 shadow-card">

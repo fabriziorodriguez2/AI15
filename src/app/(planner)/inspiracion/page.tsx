@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FileUpload } from "@/components/inspiration/FileUpload";
 import { imageToAnalysisVideoDataUrl } from "@/lib/utils/image-to-analysis-video";
+import { imageFileToPreviewDataUrl } from "@/lib/utils/image-preview";
 import type { InspirationAnalysis } from "@/types";
 
 export default function InspiracionPage() {
@@ -29,6 +30,7 @@ export default function InspiracionPage() {
   const [analysis, setAnalysis] = useState<InspirationAnalysis | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [uploadResetKey, setUploadResetKey] = useState(0);
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
@@ -93,19 +95,33 @@ export default function InspiracionPage() {
     }
   };
 
-  const handleSave = () => {
-    if (!canSave || !file) return;
-    addInspiration({
-      originalFilename: file.name,
-      userDescription:
-        note.trim() || `Inspiración de estilo ${analysis?.styles.join(", ")}.`,
-      analysis,
-    });
-    setFile(null);
-    setNote("");
-    setAnalysis(null);
+  const handleSave = async () => {
+    if (!canSave || !file || isSaving) return;
+    setIsSaving(true);
     setAnalysisError(null);
-    setUploadResetKey((value) => value + 1);
+
+    try {
+      const localPreview = await imageFileToPreviewDataUrl(file);
+      addInspiration({
+        originalFilename: file.name,
+        userDescription:
+          note.trim() || `Inspiración de estilo ${analysis?.styles.join(", ")}.`,
+        localPreview,
+        analysis,
+      });
+      setFile(null);
+      setNote("");
+      setAnalysis(null);
+      setUploadResetKey((value) => value + 1);
+    } catch (error) {
+      setAnalysisError(
+        error instanceof Error
+          ? error.message
+          : "No se pudo guardar la imagen.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -244,17 +260,21 @@ export default function InspiracionPage() {
 
         <button
           onClick={handleSave}
-          disabled={!canSave}
+          disabled={!canSave || isSaving}
           className="btn-primary w-full"
         >
-          <Save size={16} aria-hidden="true" />
-          Guardar inspiración
+          {isSaving ? (
+            <LoaderCircle size={16} className="animate-spin" aria-hidden="true" />
+          ) : (
+            <Save size={16} aria-hidden="true" />
+          )}
+          {isSaving ? "Guardando…" : "Guardar inspiración"}
         </button>
 
         <div className="flex items-start gap-3 rounded-xl bg-rosa-fondo px-4 py-3 text-xs text-texto/60">
           <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />
           Al tocar Analizar, la imagen se procesa temporalmente. Guardamos el
-          resultado y tu descripción, no el archivo original.
+          resultado, tu descripción y una copia optimizada de la imagen.
         </div>
 
         {/* Inspiraciones guardadas */}
@@ -266,9 +286,18 @@ export default function InspiracionPage() {
             <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
               {inspirations.map((insp) => (
                 <li key={insp.id} className="flex items-start gap-3 py-4">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-rosa-claro text-rosa">
-                    <ImageIcon size={16} aria-hidden="true" />
-                  </span>
+                  {insp.localPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={insp.localPreview}
+                      alt={`Inspiración: ${insp.userDescription}`}
+                      className="size-16 shrink-0 rounded-xl object-cover"
+                    />
+                  ) : (
+                    <span className="grid size-16 shrink-0 place-items-center rounded-xl bg-rosa-claro text-rosa">
+                      <ImageIcon size={22} aria-hidden="true" />
+                    </span>
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-medium text-texto/50">
                       {insp.originalFilename}

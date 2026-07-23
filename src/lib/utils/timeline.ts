@@ -4,9 +4,11 @@ import {
   parseEventDate,
   startOfToday,
   subtractDays,
-  subtractMonths,
   toISODate,
 } from "./date";
+
+const FULL_PLANNING_WINDOW_DAYS = 365;
+const AVERAGE_DAYS_PER_MONTH = FULL_PLANNING_WINDOW_DAYS / 12;
 
 export interface ComputedTask {
   id: string;
@@ -26,11 +28,29 @@ export interface PlanningTaskGroup {
 function computeTaskDate(
   eventDate: Date,
   task: TimelineTaskTemplate,
+  today = startOfToday(),
 ): Date {
-  if (typeof task.daysBefore === "number") {
-    return subtractDays(eventDate, task.daysBefore);
-  }
-  return subtractMonths(eventDate, task.monthsBefore ?? 0);
+  const availableDays = Math.max(
+    0,
+    Math.round((eventDate.getTime() - today.getTime()) / 86_400_000),
+  );
+  const originalLeadDays =
+    typeof task.daysBefore === "number"
+      ? task.daysBefore
+      : Math.round((task.monthsBefore ?? 0) * AVERAGE_DAYS_PER_MONTH);
+
+  // Cuando quedan menos de 12 meses, las tareas mensuales se redistribuyen
+  // proporcionalmente dentro del tiempo disponible. Las tareas de las
+  // últimas dos semanas conservan su cercanía al evento siempre que sea posible.
+  const adaptedLeadDays =
+    typeof task.daysBefore === "number"
+      ? originalLeadDays
+      : Math.round(
+          originalLeadDays *
+            Math.min(1, availableDays / FULL_PLANNING_WINDOW_DAYS),
+        );
+
+  return subtractDays(eventDate, Math.min(availableDays, adaptedLeadDays));
 }
 
 /**
@@ -43,7 +63,7 @@ export function buildTimeline(eventDateIso: string): ComputedTask[] {
   const today = startOfToday();
 
   return TIMELINE_TASKS.map((task) => {
-    const date = computeTaskDate(eventDate, task);
+    const date = computeTaskDate(eventDate, task, today);
     return {
       id: task.id,
       title: task.title,
@@ -64,12 +84,13 @@ export function buildSeedTasks(
 ): Omit<PlanningTask, "id" | "createdAt" | "updatedAt">[] {
   const eventDate = parseEventDate(eventDateIso);
   if (!eventDate) return [];
+  const today = startOfToday();
 
   return TIMELINE_TASKS.map((template) => ({
     eventId,
     title: template.title,
     description: template.detail,
-    dueDate: toISODate(computeTaskDate(eventDate, template)),
+    dueDate: toISODate(computeTaskDate(eventDate, template, today)),
     category: template.category,
     priority: template.priority,
     status: "pending" as const,
