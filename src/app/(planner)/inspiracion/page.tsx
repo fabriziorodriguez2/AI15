@@ -8,15 +8,18 @@ import {
   Save,
   ImageIcon,
   LoaderCircle,
+  Maximize2,
 } from "lucide-react";
 import { useEventStore } from "@/store/event-store";
 import { useStoreReady } from "@/store/use-hydrated-event";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Modal } from "@/components/ui/Modal";
 import { FileUpload } from "@/components/inspiration/FileUpload";
 import { imageToAnalysisVideoDataUrl } from "@/lib/utils/image-to-analysis-video";
 import { imageFileToPreviewDataUrl } from "@/lib/utils/image-preview";
-import type { InspirationAnalysis } from "@/types";
+import type { Inspiration, InspirationAnalysis } from "@/types";
 
 export default function InspiracionPage() {
   const ready = useStoreReady();
@@ -32,6 +35,10 @@ export default function InspiracionPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [uploadResetKey, setUploadResetKey] = useState(0);
+  const [previewInspiration, setPreviewInspiration] =
+    useState<Inspiration | null>(null);
+  const [inspirationToDelete, setInspirationToDelete] =
+    useState<Inspiration | null>(null);
 
   if (!ready) return <div className="h-40" aria-hidden="true" />;
 
@@ -125,13 +132,21 @@ export default function InspiracionPage() {
   };
 
   return (
-    <div>
-      <PageHeader
-        title="Inspiración"
-        subtitle="Subí una imagen y describí qué te gusta."
-      />
+    <div className="relative -mx-4 -my-5 min-h-[calc(100%+2.5rem)] overflow-hidden bg-gradient-to-b from-white via-[#f3fffd] to-[#fffaf0] px-4 py-5">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span className="absolute -right-20 top-10 size-56 rounded-full bg-[#48d8cf]/25 blur-3xl" />
+        <span className="absolute -left-24 top-[34rem] size-64 rounded-full bg-dorado/20 blur-3xl" />
+        <span className="absolute -right-28 top-[65rem] size-72 rounded-full bg-[#62ddd6]/20 blur-3xl" />
+        <span className="absolute left-10 top-[92rem] size-52 rounded-full bg-[#e0bd52]/15 blur-3xl" />
+      </div>
 
-      <div className="space-y-5">
+      <div className="relative z-10">
+        <PageHeader
+          title="Inspiración"
+          subtitle="Subí una imagen y describí qué te gusta."
+        />
+
+        <div className="space-y-5">
         <FileUpload
           onFileReady={handleFileReady}
           resetKey={uploadResetKey}
@@ -155,7 +170,7 @@ export default function InspiracionPage() {
         </div>
 
         {/* Análisis visual real con Gemini 2.5 Flash. */}
-        <div className="rounded-xl border border-[#e2d3a8] bg-white p-5 shadow-card">
+        <div className="rounded-xl border border-[#e2d3a8] bg-white/90 p-5 shadow-card backdrop-blur-sm">
           <div className="flex items-start gap-3">
             <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-dorado/10 text-[#8f7420]">
               <Sparkles size={20} aria-hidden="true" />
@@ -283,25 +298,32 @@ export default function InspiracionPage() {
             <h2 className="mb-3 font-display text-lg font-bold text-ciruela">
               Guardadas ({inspirations.length})
             </h2>
-            <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white px-4 shadow-card">
+            <ul className="divide-y divide-[#eadfe5] rounded-xl border border-[#eadfe5] bg-white/90 px-4 shadow-card backdrop-blur-sm">
               {inspirations.map((insp) => (
                 <li key={insp.id} className="flex items-start gap-3 py-4">
                   {insp.localPreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={insp.localPreview}
-                      alt={`Inspiración: ${insp.userDescription}`}
-                      className="size-16 shrink-0 rounded-xl object-cover"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setPreviewInspiration(insp)}
+                      aria-label="Ampliar imagen de inspiración"
+                      className="group relative size-20 shrink-0 overflow-hidden rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-rosa"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={insp.localPreview}
+                        alt={`Inspiración: ${insp.userDescription}`}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                      <span className="absolute bottom-1.5 right-1.5 grid size-7 place-items-center rounded-full bg-black/55 text-white">
+                        <Maximize2 size={13} aria-hidden="true" />
+                      </span>
+                    </button>
                   ) : (
-                    <span className="grid size-16 shrink-0 place-items-center rounded-xl bg-rosa-claro text-rosa">
+                    <span className="grid size-20 shrink-0 place-items-center rounded-xl bg-rosa-claro text-rosa">
                       <ImageIcon size={22} aria-hidden="true" />
                     </span>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-medium text-texto/50">
-                      {insp.originalFilename}
-                    </p>
                     <p className="text-sm text-ciruela">
                       {insp.userDescription}
                     </p>
@@ -316,7 +338,7 @@ export default function InspiracionPage() {
                     )}
                   </div>
                   <button
-                    onClick={() => deleteInspiration(insp.id)}
+                    onClick={() => setInspirationToDelete(insp)}
                     aria-label="Eliminar inspiración"
                     className="grid size-11 shrink-0 place-items-center rounded-lg text-texto/50 hover:bg-[#c0392b]/10 hover:text-[#c0392b]"
                   >
@@ -327,7 +349,38 @@ export default function InspiracionPage() {
             </ul>
           </div>
         )}
+        </div>
       </div>
+
+      <Modal
+        open={!!previewInspiration?.localPreview}
+        title="Vista ampliada"
+        onClose={() => setPreviewInspiration(null)}
+      >
+        {previewInspiration?.localPreview && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={previewInspiration.localPreview}
+            alt={`Inspiración ampliada: ${previewInspiration.userDescription}`}
+            className="max-h-[65dvh] w-full rounded-2xl bg-rosa-fondo object-contain"
+          />
+        )}
+      </Modal>
+
+      <ConfirmDialog
+        open={!!inspirationToDelete}
+        title="¿Eliminar inspiración?"
+        description="¿Querés borrar esta imagen y su análisis guardado?"
+        confirmLabel="Aceptar"
+        cancelLabel="Cancelar"
+        onCancel={() => setInspirationToDelete(null)}
+        onConfirm={() => {
+          if (inspirationToDelete) {
+            deleteInspiration(inspirationToDelete.id);
+          }
+          setInspirationToDelete(null);
+        }}
+      />
     </div>
   );
 }
