@@ -21,7 +21,10 @@ export default function CrearEventoPage() {
         </Link>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-6">
+      <main
+        data-create-event-scroll
+        className="flex-1 overflow-y-auto px-4 py-6"
+      >
         <div className="w-full">
         <div className="mb-7 border-b border-[#eadfe5] pb-5">
           <h1 className="font-display text-[28px] font-bold text-ciruela">

@@ -78,6 +78,7 @@ interface EventActions {
     originalFilename: string;
     userDescription: string;
     localPreview?: string;
+    analysis?: Inspiration["analysis"];
   }) => void;
   updateInspiration: (id: string, patch: Partial<Inspiration>) => void;
   deleteInspiration: (id: string) => void;
@@ -484,7 +485,7 @@ export const useEventStore = create<EventState>((set, get) => ({
           originalFilename: data.originalFilename,
           userDescription: data.userDescription,
           localPreview: data.localPreview,
-          analysis: null,
+          analysis: data.analysis ?? null,
           createdAt: now(),
         };
         set({ inspirations: [...get().inspirations, inspiration] });

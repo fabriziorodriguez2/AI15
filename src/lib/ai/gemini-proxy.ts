@@ -24,6 +24,10 @@ interface GenerationConfig {
 interface GenerateTextParams {
   prompt: string;
   model?: string;
+  /** Alias documentado por el proxy (por ejemplo, "video"). */
+  modelKey?: string;
+  /** Data URL multimedia. El proxy la procesa con Gemini multimodal. */
+  inputVideo?: string;
   generationConfig?: GenerationConfig;
   /** Timeout en milisegundos (por defecto 45s). */
   timeoutMs?: number;
@@ -101,8 +105,9 @@ export async function generateText(
         Authorization: `Bearer ${config.apiKey}`,
       },
       body: JSON.stringify({
-        model,
+        ...(params.modelKey ? { modelKey: params.modelKey } : { model }),
         prompt: params.prompt,
+        ...(params.inputVideo ? { inputVideo: params.inputVideo } : {}),
         generationConfig: params.generationConfig ?? {
           temperature: 0.7,
           maxOutputTokens: 2048,
@@ -195,11 +200,19 @@ function parseStructuredJson(text: string): unknown {
 export async function generateStructured(
   prompt: string,
   responseSchema: Record<string, unknown>,
-  options?: { model?: string; timeoutMs?: number; temperature?: number },
+  options?: {
+    model?: string;
+    modelKey?: string;
+    inputVideo?: string;
+    timeoutMs?: number;
+    temperature?: number;
+  },
 ): Promise<StructuredResult<unknown>> {
   const result = await generateText({
     prompt,
     model: options?.model,
+    modelKey: options?.modelKey,
+    inputVideo: options?.inputVideo,
     timeoutMs: options?.timeoutMs,
     generationConfig: {
       temperature: options?.temperature ?? 0.6,

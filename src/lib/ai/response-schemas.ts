@@ -122,6 +122,52 @@ export const budgetResponseSchema = {
   required: ["allocations"],
 } as const;
 
+/** Análisis visual conciso para una inspiración subida por la usuaria. */
+export const inspirationAnalysisResponseSchema = {
+  type: "object",
+  properties: {
+    styles: {
+      type: "array",
+      items: { type: "string", maxLength: 30 },
+      minItems: 1,
+      maxItems: 4,
+    },
+    colors: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string", maxLength: 25 },
+          hex: { type: "string", maxLength: 7 },
+        },
+        required: ["name", "hex"],
+      },
+      minItems: 3,
+      maxItems: 5,
+    },
+    mainElements: {
+      type: "array",
+      items: { type: "string", maxLength: 45 },
+      minItems: 2,
+      maxItems: 5,
+    },
+    recommendations: {
+      type: "array",
+      items: { type: "string", maxLength: 90 },
+      minItems: 3,
+      maxItems: 5,
+    },
+    uncertaintyNotes: { type: "string", maxLength: 160 },
+  },
+  required: [
+    "styles",
+    "colors",
+    "mainElements",
+    "recommendations",
+    "uncertaintyNotes",
+  ],
+} as const;
+
 /** Primera mitad del plan: presupuesto y próximos hitos. */
 export const planLogisticsResponseSchema = {
   type: "object",

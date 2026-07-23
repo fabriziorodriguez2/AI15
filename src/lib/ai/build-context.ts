@@ -67,7 +67,22 @@ export function buildAIContext(args: BuildArgs): AIContext {
         };
       }),
     inspirations: args.inspirations
-      .filter((i) => i.userDescription.trim().length > 0)
-      .map((i) => ({ description: i.userDescription })),
+      .filter(
+        (i) => i.userDescription.trim().length > 0 || i.analysis !== null,
+      )
+      .map((i) => {
+        const analysis = i.analysis;
+        const visualSummary = analysis
+          ? `Estilos: ${analysis.styles.join(", ")}. Colores: ${analysis.colors
+              .map((color) => color.name)
+              .join(", ")}. Recomendaciones: ${analysis.recommendations.join("; ")}.`
+          : "";
+        return {
+          description: [i.userDescription.trim(), visualSummary]
+            .filter(Boolean)
+            .join(" ")
+            .slice(0, 400),
+        };
+      }),
   };
 }

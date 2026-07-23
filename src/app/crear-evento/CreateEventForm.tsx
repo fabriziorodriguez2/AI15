@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -48,8 +48,11 @@ export function CreateEventForm() {
   const createEvent = useEventStore((state) => state.createEvent);
   const updateEvent = useEventStore((state) => state.updateEvent);
   const [step, setStep] = useState(0);
+  const [isAdvancing, setIsAdvancing] = useState(false);
   const isEditing = !!event;
   const prefilledRef = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const stepLabelRef = useRef<HTMLParagraphElement>(null);
 
   const {
     register,
@@ -85,9 +88,26 @@ export function CreateEventForm() {
     prefilledRef.current = true;
   }, [ready, event, reset]);
 
+  // El marco mobile usa un scroll interno. Al cambiar de paso lo reiniciamos
+  // para que el contenido nuevo (especialmente "Tu estilo") siempre quede
+  // visible desde arriba, en vez de conservar la posición del paso anterior.
+  useEffect(() => {
+    const scrollContainer = formRef.current?.closest<HTMLElement>(
+      "[data-create-event-scroll]",
+    );
+    scrollContainer?.scrollTo({ top: 0, behavior: "auto" });
+    stepLabelRef.current?.focus({ preventScroll: true });
+  }, [step]);
+
   const goNext = async () => {
-    const valid = await trigger(STEP_FIELDS[step]);
-    if (valid) setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    if (isAdvancing) return;
+    setIsAdvancing(true);
+    try {
+      const valid = await trigger(STEP_FIELDS[step]);
+      if (valid) setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    } finally {
+      setIsAdvancing(false);
+    }
   };
 
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
@@ -102,8 +122,18 @@ export function CreateEventForm() {
     }
   };
 
+  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    // Enter en un input no puede guardar ni navegar antes del último paso.
+    if (step < STEPS.length - 1) {
+      event.preventDefault();
+      void goNext();
+      return;
+    }
+    void handleSubmit(onSubmit)(event);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form ref={formRef} onSubmit={handleFormSubmit} noValidate>
       {isEditing && (
         <div className="mb-4 flex items-center gap-2 rounded-xl border border-dorado/40 bg-dorado/10 px-4 py-2.5 text-sm text-ciruela">
           <Pencil size={15} aria-hidden="true" />
@@ -140,7 +170,11 @@ export function CreateEventForm() {
             );
           })}
         </ol>
-        <p className="mt-3 text-sm font-semibold text-ciruela">
+        <p
+          ref={stepLabelRef}
+          tabIndex={-1}
+          className="mt-3 text-sm font-semibold text-ciruela outline-none"
+        >
           Paso {step + 1} de {STEPS.length} · {STEPS[step]}
         </p>
       </div>
@@ -426,7 +460,12 @@ export function CreateEventForm() {
           )}
 
           {step < STEPS.length - 1 ? (
-            <button type="button" onClick={goNext} className="btn-primary">
+            <button
+              type="button"
+              onClick={goNext}
+              disabled={isAdvancing}
+              className="btn-primary"
+            >
               Continuar
               <ArrowRight size={16} aria-hidden="true" />
             </button>

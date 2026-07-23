@@ -18,14 +18,15 @@ identificados e inteligencia artificial integrada. **Incluye:**
 - Dashboard con datos reales del evento y métricas de demostración.
 - Presupuesto con distribución de referencia y gráfico circular (CSS puro).
 - Catálogo de proveedores ficticios hardcodeados con filtros y búsqueda.
-- Pantalla de inspiración con carga y previsualización local de imágenes.
+- Pantalla de inspiración con carga, previsualización y análisis visual
+  real mediante Gemini 2.5 Flash.
 - Cronograma con fechas calculadas a partir de la fecha de la fiesta.
 - Pantalla de cuenta con identificación del usuario demo y restauración.
 - Generación real de un plan personalizado mediante Gemini.
 - Distribución inteligente del presupuesto mediante Gemini.
 
 **No incluye todavía** (etapas futuras): autenticación real, Supabase/base de
-datos externa, pagos, proveedores desde APIs reales, análisis real de imágenes,
+datos externa, pagos, proveedores desde APIs reales,
 automatizaciones externas ni panel administrativo.
 
 ## Stack
@@ -159,12 +160,14 @@ Realizar este recorrido:
 2. Ir a **Presupuesto** y tocar **Generar distribución con IA**.
 3. Ir a **Plan** y tocar **Generar mi plan con AI15**.
 4. Comprobar que el plan muestre presupuesto, tareas y recomendaciones.
-5. Ir a **Proveedores > Ejemplos** y probar los filtros del catálogo
+5. Ir a **Inspiración**, subir una imagen y tocar **Analizar imagen** para
+   comprobar estilos, paleta y recomendaciones.
+6. Ir a **Proveedores > Ejemplos** y probar los filtros del catálogo
    hardcodeado.
-6. Agregar un gasto o una tarea y comprobar que la interfaz se actualice.
+7. Agregar un gasto o una tarea y comprobar que la interfaz se actualice.
 
 Las generaciones de IA pueden demorar varios segundos. Si las pantallas
-normales funcionan pero las dos acciones de IA fallan, revisar primero la
+normales funcionan pero las acciones de IA fallan, revisar primero la
 clave y reiniciar el servidor.
 
 ### 7. Validar el proyecto antes de entregar
@@ -265,6 +268,8 @@ Las rutas de IA son:
   plan, combina ambas respuestas y las valida.
 - `POST /api/ai/budget`: genera la distribución porcentual y normaliza los
   importes contra el presupuesto total.
+- `POST /api/ai/inspiration`: analiza una referencia visual con el mismo
+  `gemini-2.5-flash` y devuelve estilos, colores y recomendaciones validadas.
 
 - El estado vive en un único store de Zustand en memoria, inicializado con un
   usuario hardcodeado. La aplicación no utiliza `localStorage`.
@@ -276,16 +281,17 @@ Las rutas de IA son:
 El cliente de Gemini existe en `src/lib/ai/gemini-proxy.ts`, importa
 `server-only`, lee la clave desde variables de entorno, maneja timeout con
 `AbortController` y traduce errores sin filtrar información sensible. Las rutas
-`/api/ai/plan` y `/api/ai/budget` realizan llamadas reales al proxy estudiantil,
-solicitan JSON estructurado y validan la respuesta con Zod antes de mostrarla o
-aplicarla al presupuesto.
+`/api/ai/plan`, `/api/ai/budget` y `/api/ai/inspiration` realizan llamadas reales
+al proxy estudiantil, solicitan JSON estructurado y validan la respuesta con Zod
+antes de mostrarla o aplicarla. Para el análisis visual, el navegador prepara
+localmente un clip estático pequeño que el proxy procesa con la entrada
+multimodal de Gemini 2.5 Flash; el archivo original no se guarda.
 
 ## Próximas etapas
 
-1. Análisis de inspiración (imágenes de vestidos/decoración).
-2. Memoria persistente de decisiones entre sesiones.
-3. Autenticación y persistencia en la nube.
-4. Proveedores reales.
+1. Memoria persistente de decisiones entre sesiones.
+2. Autenticación y persistencia en la nube.
+3. Proveedores reales.
 
 ## Medidas tomadas para proteger la API key
 

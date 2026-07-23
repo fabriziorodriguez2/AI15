@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImagePlus, X, RefreshCw } from "lucide-react";
 
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
@@ -9,17 +9,28 @@ const MAX_SIZE_MB = 5;
 interface FileUploadProps {
   /** Notifica cuándo hay una imagen previsualizable seleccionada. */
   onFileReady?: (file: File | null) => void;
+  /** Cambiar este valor limpia el selector después de guardar. */
+  resetKey?: number;
 }
 
 /**
  * Selector de imagen con previsualización local.
  * Valida tipo (JPG/PNG/WEBP) y tamaño máximo (5 MB).
- * No envía la imagen a ningún servicio externo en esta etapa.
+ * La imagen solo se envía cuando la usuaria confirma el análisis con IA.
  */
-export function FileUpload({ onFileReady }: FileUploadProps) {
+export function FileUpload({ onFileReady, resetKey = 0 }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreviewUrl((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return null;
+    });
+    setError(null);
+    if (inputRef.current) inputRef.current.value = "";
+  }, [resetKey]);
 
   const handleFiles = (fileList: FileList | null) => {
     setError(null);
@@ -78,7 +89,7 @@ export function FileUpload({ onFileReady }: FileUploadProps) {
         </button>
       ) : (
         <div className="overflow-hidden rounded-xl border border-[#eadfe5] bg-white">
-          {/* Previsualización local; no se sube a ningún servidor. */}
+          {/* Previsualización local; el envío requiere una acción explícita. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={previewUrl}
